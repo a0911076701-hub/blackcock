@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private boolean isRunning = true;
-    private Map<String, Socket> devices = new HashMap<>(); // تخزين الأجهزة المتصلة
+    private Map<String, Socket> devices = new HashMap<>();
+    private Map<String, Long> lastHeartbeat = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,21 @@ public class MainActivity extends AppCompatActivity {
                 String deviceId = extractDeviceId(data);
                 if (deviceId != null) {
                     devices.put(deviceId, socket);
+                    lastHeartbeat.put(deviceId, System.currentTimeMillis());
                     runOnUiThread(() -> webView.loadUrl("javascript:addDevice('" + data + "')"));
+                    out.println("OK");
+                }
+                return;
+            }
+
+            // نبضات الحياة (Heartbeat)
+            if (request.startsWith("HEARTBEAT:")) {
+                String[] parts = request.substring(10).split(":");
+                if (parts.length >= 1) {
+                    String deviceId = parts[0];
+                    lastHeartbeat.put(deviceId, System.currentTimeMillis());
+                    // تحديث حالة الجهاز في الواجهة
+                    runOnUiThread(() -> webView.loadUrl("javascript:updateDeviceStatus('" + deviceId + "')"));
                     out.println("OK");
                 }
                 return;

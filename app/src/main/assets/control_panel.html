@@ -128,6 +128,11 @@
             }
         }
 
+        function updateDeviceStatus(deviceId) {
+            // تحديث حالة الجهاز (يمكن استخدامها لتحديث الأيقونة)
+            log('🔄 تحديث حالة الجهاز: ' + deviceId);
+        }
+
         function updateDevices() {
             const container = document.getElementById('devices');
             container.innerHTML = '';
@@ -143,6 +148,13 @@
                 container.appendChild(div);
             }
         }
+
+        // تحديث دوري للجهاز (كل 5 ثوانٍ)
+        setInterval(() => {
+            for (let id in devices) {
+                // يمكن إرسال طلب للتحقق من الاتصال
+            }
+        }, 5000);
 
         log('✅ لوحة التحكم جاهزة');
     </script>
