@@ -10,38 +10,31 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',monospace}
         body{background:#0a0000;color:#00ff00;padding:10px;max-width:600px;margin:auto;min-height:100vh;overflow-x:hidden;position:relative}
-        /* خلفية متحركة بنمط شبكي */
         body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 20% 50%, rgba(255,0,0,0.05) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0,255,0,0.03) 0%, transparent 50%);pointer-events:none;z-index:0}
-        /* دوائر زخرفية */
         .circle{position:fixed;border-radius:50%;border:1px solid rgba(255,0,0,0.05);pointer-events:none;z-index:0}
         .circle.c1{width:300px;height:300px;top:-100px;right:-100px;border-color:rgba(255,0,0,0.08)}
         .circle.c2{width:200px;height:200px;bottom:-50px;left:-50px;border-color:rgba(0,255,0,0.05)}
         .circle.c3{width:150px;height:150px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(255,0,0,0.03)}
         .glitch{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#ff0000,transparent);animation:glitchLine 3s infinite;z-index:1;opacity:0.3}
         @keyframes glitchLine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-        /* رأس الصفحة */
         .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:15px;border-radius:15px;text-align:center;margin-bottom:12px;border:1px solid #ff0000;box-shadow:0 0 40px rgba(255,0,0,0.15),inset 0 0 40px rgba(255,0,0,0.05);position:relative;z-index:2}
         .header .skull{font-size:32px;display:block;text-shadow:0 0 30px #ff0000;animation:pulseSkull 2s infinite}
         @keyframes pulseSkull{0%,100%{text-shadow:0 0 20px #ff0000;transform:scale(1)}50%{text-shadow:0 0 40px #ff0000,0 0 80px #ff0000;transform:scale(1.05)}}
         .header h1{font-size:20px;color:#ff0000;text-shadow:0 0 20px #ff0000;letter-spacing:4px;margin:4px 0}
         .header .sub{font-size:9px;color:#00ff00;letter-spacing:3px;opacity:0.7;font-family:monospace}
         .header .sub span{color:#ff0000}
-        /* إعدادات Firebase */
         .setup{background:#0a0000;padding:15px;border-radius:15px;margin-bottom:12px;border:1px solid #330000;position:relative;z-index:2}
         .setup h3{color:#ff0000;font-size:12px;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 10px #ff0000}
         .setup input{width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid #330000;background:#0a0000;color:#00ff00;font-size:12px;outline:none;transition:0.3s;font-family:monospace}
         .setup input:focus{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.1)}
         .setup button{width:100%;padding:12px;background:linear-gradient(135deg,#ff0000,#660000);color:#000;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:bold;text-shadow:0 0 10px #ff0000;transition:0.3s;letter-spacing:2px}
         .setup button:hover{box-shadow:0 0 40px rgba(255,0,0,0.3);transform:scale(1.01)}
-        /* قائمة الأجهزة */
         .device-list{background:#0a0000;padding:12px;border-radius:15px;margin-bottom:12px;border:1px solid #003300;position:relative;z-index:2}
         .device-list h3{color:#00ff00;font-size:12px;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 10px #00ff00}
         .device-item{padding:10px 14px;border:1px solid #003300;border-radius:10px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#0a0000;transition:0.3s}
         .device-item:hover{border-color:#00ff00;box-shadow:0 0 20px rgba(0,255,0,0.1)}
         .device-item.active{border-color:#ff0000;background:#1a0000;box-shadow:0 0 30px rgba(255,0,0,0.15)}
         .device-item .status{font-size:9px;color:#00ff00;font-family:monospace}
-        .device-item .status.offline{color:#660000}
-        /* أقسام الأوامر */
         .section-title{font-size:11px;color:#ff0000;letter-spacing:3px;margin:15px 0 10px;border-bottom:1px solid #330000;padding-bottom:6px;text-shadow:0 0 10px #ff0000;position:relative;z-index:2}
         .section-title .skull-small{font-size:14px;margin-left:6px}
         .controls-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;position:relative;z-index:2}
@@ -54,17 +47,14 @@
         .ctrl-btn.control-btn:hover{border-color:#0066ff;box-shadow:0 0 20px rgba(0,102,255,0.1)}
         .ctrl-btn.danger-btn{border-color:#330000}
         .ctrl-btn.danger-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
-        /* السجل */
         .log{background:#0a0000;padding:10px;border-radius:10px;margin-top:12px;max-height:120px;overflow-y:auto;font-family:monospace;font-size:9px;color:#00ff00;border:1px solid #003300;position:relative;z-index:2}
         .log .time{color:#660000}
-        /* الصفحات */
         .page{display:none;animation:fadeIn 0.3s;position:relative;z-index:2}
         .page.active{display:block}
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         .back-btn{background:#0a0000;color:#ff0000;border:1px solid #330000;padding:8px 16px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-size:10px;font-family:monospace;transition:0.3s}
         .back-btn:hover{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.1)}
         .selected-device{color:#ff0000;font-weight:bold;font-size:13px;text-align:center;padding:10px;background:#1a0000;border-radius:10px;margin-bottom:12px;border:1px solid #ff0000;text-shadow:0 0 15px #ff0000;font-family:monospace}
-        /* صفحة النتيجة */
         .result-title{color:#ff0000;font-size:16px;margin-bottom:10px;text-shadow:0 0 20px #ff0000;font-family:monospace}
         .result-content{background:#0a0000;padding:12px;border-radius:10px;max-height:250px;overflow-y:auto;font-size:11px;color:#fff;border:1px solid #330000;white-space:pre-wrap;font-family:monospace}
         .result-content .location-link{color:#0066ff;text-decoration:underline;cursor:pointer}
@@ -72,14 +62,9 @@
         .download-btn{background:#00ff00;color:#000;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin-top:8px;margin-right:6px;font-size:11px;font-family:monospace}
         .open-btn{background:#0066ff;color:#fff;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin-top:8px;font-size:11px;font-family:monospace}
         .file-path{color:#666;font-size:10px;margin-top:6px;font-family:monospace}
-        /* تذييل */
         .footer{text-align:center;margin-top:15px;font-size:7px;color:#330000;letter-spacing:3px;font-family:monospace;position:relative;z-index:2}
         .footer span{color:#660000}
-        /* أيقونات إضافية */
-        .skull-icon{display:inline-block;animation:pulseSkull 2s infinite}
-        /* نص وهمي (تأثير هكر) */
         .hacker-text{font-size:7px;color:#003300;letter-spacing:2px;text-align:center;margin-top:6px;font-family:monospace;position:relative;z-index:2}
-        /* تحسينات للشاشات الصغيرة */
         @media(max-width:400px){.controls-grid{grid-template-columns:repeat(3,1fr)}.ctrl-btn{font-size:7px;padding:6px 2px}.ctrl-btn .icon{font-size:15px}}
         .action-message{background:#0a1a0a;color:#00ff00;padding:8px;border-radius:8px;margin-top:8px;border:1px solid #00ff00;font-size:10px;text-align:center}
         .action-message.danger{background:#1a0a0a;color:#ff0000;border-color:#ff0000}
