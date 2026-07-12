@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // تسجيل جهاز جديد
             if (request.startsWith("REGISTER:")) {
                 String data = request.substring(9);
                 String deviceId = extractDeviceId(data);
@@ -74,20 +73,16 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // نبضات الحياة (Heartbeat)
             if (request.startsWith("HEARTBEAT:")) {
                 String[] parts = request.substring(10).split(":");
                 if (parts.length >= 1) {
                     String deviceId = parts[0];
                     lastHeartbeat.put(deviceId, System.currentTimeMillis());
-                    // تحديث حالة الجهاز في الواجهة
-                    runOnUiThread(() -> webView.loadUrl("javascript:updateDeviceStatus('" + deviceId + "')"));
                     out.println("OK");
                 }
                 return;
             }
 
-            // استقبال بيانات من الجهاز
             if (request.startsWith("DATA:")) {
                 String data = request.substring(5);
                 runOnUiThread(() -> webView.loadUrl("javascript:showData('" + data + "')"));
@@ -95,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // أمر من لوحة التحكم إلى جهاز معين
             if (request.startsWith("CMD:")) {
                 String cmdData = request.substring(4);
                 String[] parts = cmdData.split("\\|");
