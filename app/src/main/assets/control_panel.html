@@ -91,7 +91,16 @@
                 method: 'POST',
                 headers: {'Content-Type': 'text/plain'},
                 body: 'CMD:' + cmd + '|' + selectedDevice
-            });
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    log('✅ تم إرسال الأمر بنجاح');
+                } else {
+                    log('❌ فشل إرسال الأمر: ' + data);
+                }
+            })
+            .catch(err => log('❌ خطأ في الاتصال: ' + err.message));
         }
 
         function log(msg) {
@@ -134,15 +143,6 @@
                 container.appendChild(div);
             }
         }
-
-        setTimeout(() => {
-            addDevice(JSON.stringify({
-                device_id: 'TEST_DEVICE_001',
-                device_name: 'هاتف اختبار',
-                model: 'Samsung',
-                android: '14'
-            }));
-        }, 2000);
 
         log('✅ لوحة التحكم جاهزة');
     </script>
