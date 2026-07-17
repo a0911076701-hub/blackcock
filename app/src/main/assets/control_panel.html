@@ -418,3 +418,11 @@
     </script>
 </body>
 </html>
+<script>
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('✅ تم نسخ النص');
+    });
+}
+</script>
+<button onclick="copyText(document.getElementById('result').innerText)">📋 نسخ النتيجة</button>
